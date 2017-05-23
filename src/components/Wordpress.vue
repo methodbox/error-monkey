@@ -94,12 +94,9 @@ export default {
       let errorText = document.getElementById('error-field')
       let splitError = errorText.value.split(' ')
       this.formSubmitted = true
-      console.log(splitError)
-      console.log(splitError[0])
       if (splitError[0] + ' ' + splitError[1] === 'Fatal error:' || splitError[0] === 'Warning:') {
         //  handle WP fatal errors related to plugins & themes
         console.log('Evaluating WP Theme/Plugin Error...')
-
         if (splitError[2] === 'Call') {
           let errorPath = splitError[8].split('/')
           for (let t = 0; t < errorPath.length; t++) {
@@ -109,22 +106,18 @@ export default {
           }
         }
         if (splitError[2] === 'require_once():') {
-          console.log('require running')
           let errorPath = splitError[9].split('/')
           for (let r = 0; r < errorPath.length; r++) {
             if (errorPath[r] === 'plugins') {
               this.themePlug = 'Plugin'
-              console.log(this.themePlug)
             }
           }
         }
         if (splitError[0] === 'Warning:') {
-          console.log('warning is running')
           let errorPath = splitError[12].split('/')
           for (let w = 0; w < errorPath.length; w++) {
             if (errorPath[w] === 'plugins') {
               this.themePlug = 'Plugin'
-              console.log(this.themePlug)
             }
           }
         }

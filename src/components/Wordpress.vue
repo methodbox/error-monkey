@@ -68,29 +68,45 @@
         </table>
       </div>
     </div>
-    <unknown-error v-if="!themePlug && formSubmitted"></unknown-error>
+    <unknown-error v-if="!themePlug && formSubmitted && !notFound"></unknown-error>
+    <four-four v-if="notFound"></four-four>
   </div>
 </template>
 
 <script>
 import UnknownError from './Unknown.vue'
+import fourFour from './404.vue'
 export default {
   components: {
-    UnknownError
+    UnknownError,
+    fourFour
   },
   data () {
     return {
+      notFound: false,
+      internalSerErr: false,
+      serverErrorType: '',
+      errorUrl: '',
       ctufs: '',
       themePlug: '',
-      formSubmitted: false
+      formSubmitted: false,
+      unknown: false
     }
   },
   props: ['wordpress'],
   methods: {
-    errorFormSubmit (event) {
+    resetForm () {
+      this.notFound = false
+      this.internalSerErr = false
+      this.serverErrorType = ''
+      this.errorUrl = ''
       this.ctufs = ''
       this.themePlug = ''
       this.formSubmitted = false
+      this.unknown = false
+    },
+    errorFormSubmit (event) {
+      this.resetForm()
       let errorText = document.getElementById('error-field')
       let splitError = errorText.value.split(' ')
       this.formSubmitted = true
@@ -123,14 +139,19 @@ export default {
         }
         for (let u = 0; u < 6; u++) {
           //  grab "fatal error" and call to undef function
-          this.ctufs += splitError[u] + ' '
+          this.ctufs += splitError[u].substring(0, 30) + ' '
         }
+      } else if (splitError[5] === 'URL' && splitError[16] === '404') {
+        this.notFound = true
+        this.errorUrl = splitError[6]
+      } else if (splitError[0] + ' ' + splitError[1] + ' ' + splitError[2] === 'Internal Server Error') {
+        this.internalSerErr = true
+        this.serverErrorType = '500 Internal Server Error'
+      } else {
+        this.unknown = true
       }
     },
     wpReset () {
-      this.ctufs = ''
-      this.themePlug = ''
-      this.formSubmitted = false
       document.getElementById('error-field').value = ''
     }
   }

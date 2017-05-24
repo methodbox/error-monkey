@@ -3,7 +3,7 @@
     <img src="./assets/error-monkey-icon@0.25x.png">
     <h3>Error Monkey</h3>
     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="custom-check">
-      <input type="radio" id="custom-check" class="mdl-radio__button error-type" name="options" value="Custom"  v-model="errorType" checked>
+      <input type="radio" id="custom-check" class="mdl-radio__button error-type" name="options" value="Custom">
       <span class="mdl-radio__label">Unknown/Custom</span>
     </label>
     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="wp-check">
@@ -11,7 +11,7 @@
       <span class="mdl-radio__label">WordPress</span>
     </label>
     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="jm-check">
-      <input type="radio" id="jm-check" class="mdl-radio__button error-type" name="options" value="Joomla" v-model="errorType">
+      <input type="radio" id="jm-check" class="mdl-radio__button error-type" name="options" value="Joomla">
       <span class="mdl-radio__label">Joomla</span>
     </label>
     <div class="mdl-grid" v-show='wordpress'>

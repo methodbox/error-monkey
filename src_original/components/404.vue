@@ -14,7 +14,7 @@
             <td class="mdl-data-table__cell--non-numeric">
               <span class="mdl-chip mdl-chip--contact">
                 <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">F</span>
-                <span class="mdl-chip__text ">{{serverErrorType}}</span>
+                <span class="mdl-chip__text ">{{this.serverErrorType}}</span>
               </span>
             </td>
             <td class='mdl-data-table__cell--non-numeric'>This error is always caused by a problem with the application.</td>
@@ -59,11 +59,7 @@
 
 <script>
 export default {
-  data () {
-    return {
-      serverErrorType: '404 Not Found'
-    }
-  }
+  props: ['serverErrorType']
 }
 </script>
 

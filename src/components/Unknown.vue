@@ -12,7 +12,7 @@
           <tr>
             <td class='mdl-data-table__cell--non-numeric'>
               <h3>This error is not currently recognized</h3>
-              <h5>Please submit this error via email to <a id="mail-error" href="mailto:email@nowhere.com"><i class="material-icons">mail_outline</i> Email</a></h5>
+              <h5>Please submit this error via email to <a id="mail-error" href="mailto:none@email.com"><i class="material-icons">mail_outline</i>This Person</a></h5>
             </td>
             <td class='mdl-data-table__cell--non-numeric'>
               <ul class='mdl-list'>

@@ -1,5 +1,4 @@
 <template>
-  <!--  404 server error template  -->
   <div class="mdl-grid">
     <div class="mdl-cell mdl-cell--8-col mdl-cell--1-offset">
       <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
@@ -14,7 +13,7 @@
             <td class='mdl-data-table__cell--non-numeric text-right'>
               <span class="mdl-chip mdl-chip--contact">
                 <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">F</span>
-                <span class="mdl-chip__text ">404 Not Found</span>
+                <span class="mdl-chip__text ">403 Forbidden</span>
               </span>
             </td>
             <td class='mdl-data-table__cell--non-numeric'>This is a configuration issue.</td>
@@ -35,12 +34,17 @@
                 </li>
                 <li class="mdl-list__item">
                   <span class="mdl-list__item-primary-content">
-                    This issue may be caused by the server configuration, but is usually due to a missing or broken htaccess or web.config file.
+                    Most commonly, this is caused when no index file is present in the document root (folder) the domain points to. Check the document root in Addon/Hosted domains.
                   </span>
                 </li>
                 <li class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content more-serious">
-                    If this issue is occurring on the home page, it is possible that something more serious is happening. Review Additional Suggestions.
+                  <span class="mdl-list__item-primary-content">
+                    Valid file names: index.*, welcome.*, home.* and default.*(* html, php, aspx, asp, shtm, shtml, htm).
+                  </span>
+                </li>
+                <li class="mdl-list__item">
+                  <span class="mdl-list__item-primary-content">
+                    File names are case-sensitive in Linux - this means Index.html is not equal to index.html. This can, but does not always apply to Windows.
                   </span>
                 </li>
               </ul>
@@ -103,30 +107,14 @@
 
 <script>
 export default {
-  props: ['notFound']
 }
 </script>
 
 <style lang="css">
-  li > i {
-    padding-right: 8px;
-  }
-  ul.mdl-list {
-    border-left: 1px solid rgb(255,64,129);
-  }
-  .mdl-list__item-primary-content > h4 {
-    line-height: 6px;
-  }
-  .full-width {
-    width: 100%;
-  }
   .more-serious {
     color: red;
   }
-  #mail-error {
-    text-decoration: none;
-  }
-  #suggestions-row, #suggestions-row-data {
-    max-width: 400px;
+  .mdl-list__item-primary-content > h4 {
+    line-height: 6px;
   }
 </style>

@@ -26,7 +26,7 @@
       <div class="mdl-grid">
         <div class="mdl-cell--5-col mdl-cell--3-offset mdl-grid--no-spacing">
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
-            <input class="mdl-textfield__input" type="text" name="Test Field" id="error-field" placeholder="Enter the Error" v-on:click="wpReset">
+            <input class="mdl-textfield__input" type="text" name="Test Field" id="error-field" placeholder="Enter the Error" v-on:click="searchReset">
           </div>
         </div>
         <div class="mdl-cell-1-col button-spacing">
@@ -51,6 +51,16 @@
         <unknown></unknown>
       </div>
     </div>
+    <div class="mdl-grid" v-if='forbidden'>
+      <div class="mdl-cell mdl-cell--12-col">
+        <forbidden></forbidden>
+      </div>
+    </div>
+    <div class="mdl-grid" v-if='tmp'>
+      <div class="mdl-cell mdl-cell--12-col">
+        <temp-folder></temp-folder>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -58,12 +68,16 @@
 import Wordpress from './components/Wordpress'
 import fourOhFour from './components/notFound'
 import Unknown from './components/Unknown'
+import Forbidden from './components/Forbidden'
+import tempFolder from './components/tempFolder'
 export default {
   name: 'app',
   components: {
     Wordpress,
     fourOhFour,
-    Unknown
+    Unknown,
+    Forbidden,
+    tempFolder
   },
   data () {
     return {
@@ -78,7 +92,9 @@ export default {
         notFoundBool: false,
         notFoundUrl: ''
       },
-      unknown: false
+      unknown: false,
+      forbidden: false,
+      tmp: false
     }
   },
   methods: {
@@ -98,14 +114,18 @@ export default {
       this.custom = true
     },
     resetForm () {
+      this.wordpress = false
+      this.joomla = false
+      this.custom = false
+      this.unknown = false
+      this.forbidden = false
       this.notFound.notFoundBool = false
+      this.tmp = false
       this.internalSerErr = false
       this.serverErrorType = ''
-      this.errorUrl = ''
       this.wp.wpErrorName = ''
       this.wp.themePlug = ''
       this.wp.formSubmitted = false
-      this.unknown = false
     },
     wpError (errorArray) {
       //  parse the error sent from errorFormSubmit
@@ -124,6 +144,8 @@ export default {
         this.wpEvaluate(errorArray[9].split('/'))
       } else if (errorArray[0] === 'Warning:') {
         this.wpEvaluate(errorArray[12].split('/'))
+      } else if (errorArray[3] === 'redeclare') {
+        this.wpEvaluate(errorArray[10].split('/'))
       }
     },
     wpEvaluate (errorPath) {
@@ -133,28 +155,66 @@ export default {
           this.wp.themePlug = 'Theme'
         } else if (errorPath[e] === 'plugins') {
           this.wp.themePlug = 'Plugin'
+        } else if (errorPath[e] === 'wp-admin') {
+          this.wp.themePlug = 'Deprecated WP Function - out of date theme or plugin'
         }
       }
     },
     errorFormSubmit (event) {
-      this.resetForm()
       let errorText = document.getElementById('error-field')
       let splitError = errorText.value.split(' ')
-      if (splitError[0] + ' ' + splitError[1] === 'Fatal error:' || splitError[0] === 'Warning:') {
+      if (splitError[0] + ' ' + splitError[1] === 'Fatal error:' || splitError[0] === 'Warning:' && !splitError[1] === 'Unknown:' && !splitError[1] === 'session_start():') {
+        this.resetForm()
         this.wpError(splitError)
         this.wordpress = true
-      } else if (splitError[5] === 'URL' && splitError[16] === '404') {
-        this.notFound.notFoundBool = true
-        this.notFound.notFoundUrl = splitError[6]
+      } else if (splitError[5] === 'URL' && (splitError[16] === '404' || splitError[17] === '404')) {
+        this.notFoundEvent()
+      } else if (splitError[0] === 'Forbidden') {
+        this.forbiddenEvent()
       } else if (splitError[0] + ' ' + splitError[1] + ' ' + splitError[2] === 'Internal Server Error') {
-        this.internalSerErr = true
-        this.serverErrorType = '500 Internal Server Error'
+        this.iseEvent()
+      } else if (splitError[1] === 'Unknown:') {
+        this.tmpEvent(splitError[2].split('/'))
+      } else if (splitError[1] === 'session_start():') {
+        this.tmpEvent(splitError[4])
       } else {
-        this.unknown = true
+        this.unknownEvent()
+      }
+      this.searchReset()
+    },
+    searchReset () {
+      document.getElementById('error-field').value = ''
+    },
+    notFoundEvent () {
+      this.resetForm()
+      this.notFound.notFoundBool = true
+      this.serverErrorType = '404 Not Found'
+    },
+    iseEvent () {
+      this.resetForm()
+      this.internalSerErr = true
+      this.serverErrorType = '500 Internal Server Error'
+    },
+    forbiddenEvent () {
+      this.resetForm()
+      this.forbidden = true
+      this.serverErrorType = '403 Forbidden'
+    },
+    tmpEvent (tmpPath) {
+      this.resetForm()
+      if (tmpPath === 'session') {
+        this.tmp = true
+      } else {
+        for (let t = 0; t < tmpPath.length; t++) {
+          if (tmpPath[t] === 'tmp') {
+            this.tmp = true
+          }
+        }
       }
     },
-    wpReset () {
-      document.getElementById('error-field').value = ''
+    unknownEvent () {
+      this.resetForm()
+      this.unknown = true
     }
   }
 }
@@ -162,11 +222,17 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Lato', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.mdl-list__item {
+  font-size: 14px;
+}
+td.mdl-data-table__cell--non-numeric.text-right {
+  text-align: right;
 }
 </style>

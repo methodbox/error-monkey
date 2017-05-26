@@ -12,7 +12,7 @@
           </thead>
           <tbody>
             <tr>
-              <td class="mdl-data-table__cell--non-numeric">
+              <td class='mdl-data-table__cell--non-numeric text-right'>
                 <span class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">Err</span>
                   <span class="mdl-chip__text ">{{wp.wpErrorName}}</span>
@@ -21,7 +21,7 @@
               <td class='mdl-data-table__cell--non-numeric'>This error is always caused by a problem with the application.</td>
             </tr>
             <tr>
-              <td class='mdl-data-table__cell--non-numeric'>
+              <td class='mdl-data-table__cell--non-numeric text-right'>
                 <span class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact mdl-color--orange mdl-color-text--white">C</span>
                   <span class="mdl-chip__text">Caused by Theme or Plugin</span>
@@ -30,7 +30,7 @@
               <td class='mdl-data-table__cell--non-numeric'>{{wp.themePlug}}</td>
             </tr>
             <tr>
-              <td class='mdl-data-table__cell--non-numeric'>
+              <td class='mdl-data-table__cell--non-numeric text-right'>
                 <span class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact mdl-color--purple mdl-color-text--white">S</span>
                   <span class="mdl-chip__text">Recommended Solution</span>

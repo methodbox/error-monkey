@@ -41,14 +41,14 @@
         <wordpress v-bind:wp="wp"></wordpress>
       </div>
     </div>
-    <div class="mdl-grid" v-if='notFound.notFoundBool'>
+    <div class="mdl-grid" v-if='common'>
       <div class="mdl-cell mdl-cell--12-col">
-        <four-oh-four></four-oh-four>
+        <common-errors v-bind:commonErr="commonErr"></common-errors>
       </div>
     </div>
-    <div class="mdl-grid" v-if='unknown'>
+    <div class="mdl-grid" v-if='notFound'>
       <div class="mdl-cell mdl-cell--12-col">
-        <unknown></unknown>
+        <four-oh-four></four-oh-four>
       </div>
     </div>
     <div class="mdl-grid" v-if='forbidden'>
@@ -61,6 +61,11 @@
         <temp-folder></temp-folder>
       </div>
     </div>
+    <div class="mdl-grid" v-if='unknown'>
+      <div class="mdl-cell mdl-cell--12-col">
+        <unknown></unknown>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,10 +75,12 @@ import fourOhFour from './components/notFound'
 import Unknown from './components/Unknown'
 import Forbidden from './components/Forbidden'
 import tempFolder from './components/tempFolder'
+import commonErrors from './components/commonErrors'
 export default {
   name: 'app',
   components: {
     Wordpress,
+    commonErrors,
     fourOhFour,
     Unknown,
     Forbidden,
@@ -88,13 +95,21 @@ export default {
         wpErrorName: '',
         themePlug: ''
       },
-      notFound: {
-        notFoundBool: false,
-        notFoundUrl: ''
-      },
+      notFound: false,
       unknown: false,
       forbidden: false,
-      tmp: false
+      tmp: false,
+      common: false,
+      commonErr: {
+        errorType: '',
+        causeOne: '',
+        causeTwo: '',
+        causeThree: '',
+        solutionOne: '',
+        solutionTwo: '',
+        solutionThree: ''
+      }
+
     }
   },
   methods: {
@@ -119,8 +134,9 @@ export default {
       this.custom = false
       this.unknown = false
       this.forbidden = false
-      this.notFound.notFoundBool = false
+      this.notFound = false
       this.tmp = false
+      this.common = false
       this.internalSerErr = false
       this.serverErrorType = ''
       this.wp.wpErrorName = ''
@@ -187,18 +203,36 @@ export default {
     },
     notFoundEvent () {
       this.resetForm()
-      this.notFound.notFoundBool = true
-      this.serverErrorType = '404 Not Found'
+      this.common = true
+      this.commonErr.errorType = '404 Not Found'
+      this.commonErr.causeOne = 'This is a configuration issue.'
+      this.commonErr.causeTwo = 'This issue may be caused by the server configuration, but is usually due to a missing or broken htaccess or web.config file.'
+      this.commonErr.causeThree = 'If this issue is occurring on the home page, it is possible that something more serious is happening. Review Additional Suggestions.'
+      this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
+      this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
+      this.commonErr.solutionThree = 'Offer Sucuri if signs of malware/hacking are found (see: Additional Suggestions)'
     },
     iseEvent () {
       this.resetForm()
       this.internalSerErr = true
-      this.serverErrorType = '500 Internal Server Error'
+      this.commonErr.errorType = '500 Internal Server Error'
+      this.commonErr.causeOne = ''
+      this.commonErr.causeTwo = ''
+      this.commonErr.causeThree = ''
+      this.commonErr.solutionOne = ''
+      this.commonErr.solutionTwo = ''
+      this.commonErr.solutionThree = ''
     },
     forbiddenEvent () {
       this.resetForm()
-      this.forbidden = true
-      this.serverErrorType = '403 Forbidden'
+      this.common = true
+      this.commonErr.errorType = '403 Forbidden'
+      this.commonErr.causeOne = 'Most commonErrly, this is caused when no index file is present in the document root (folder) the domain points to. Check the document root in Addon/Hosted domains.'
+      this.commonErr.causeTwo = 'Valid file names: index.*, welcome.*, home.* and default.*(* html, php, aspx, asp, shtm, shtml, htm).'
+      this.commonErr.causeThree = 'File names are case-sensitive in Linux - this means Index.html is not equal to index.html. This can, but does not always apply to Windows.'
+      this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
+      this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
+      this.commonErr.solutionThree = 'Offer Sucuri if signs of malware/hacking are found (see: Additional Suggestions)'
     },
     tmpEvent (tmpPath) {
       this.resetForm()
@@ -221,18 +255,21 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Lato', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-.mdl-list__item {
-  font-size: 14px;
-}
-td.mdl-data-table__cell--non-numeric.text-right {
-  text-align: right;
-}
+  #app {
+    font-family: 'Lato', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+  .mdl-list__item {
+    font-size: 14px;
+  }
+  td.mdl-data-table__cell--non-numeric.text-right {
+    text-align: right;
+  }
+  #suggestions-row, #suggestions-row-data {
+    max-width: 400px;
+  }
 </style>

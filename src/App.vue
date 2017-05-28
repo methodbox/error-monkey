@@ -43,22 +43,12 @@
     </div>
     <div class="mdl-grid" v-if='common'>
       <div class="mdl-cell mdl-cell--12-col">
-        <common-errors v-bind:commonErr="commonErr"></common-errors>
+        <common-errors v-bind:commonErr='commonErr'></common-errors>
       </div>
     </div>
-    <div class="mdl-grid" v-if='notFound'>
+    <div class="mdl-grid" v-if='serverErr'>
       <div class="mdl-cell mdl-cell--12-col">
-        <four-oh-four></four-oh-four>
-      </div>
-    </div>
-    <div class="mdl-grid" v-if='forbidden'>
-      <div class="mdl-cell mdl-cell--12-col">
-        <forbidden></forbidden>
-      </div>
-    </div>
-    <div class="mdl-grid" v-if='tmp'>
-      <div class="mdl-cell mdl-cell--12-col">
-        <temp-folder></temp-folder>
+        <server-errors v-bind:serverErrs='serverErrs'></server-errors>
       </div>
     </div>
     <div class="mdl-grid" v-if='unknown'>
@@ -71,23 +61,20 @@
 
 <script>
 import Wordpress from './components/Wordpress'
-import fourOhFour from './components/notFound'
 import Unknown from './components/Unknown'
-import Forbidden from './components/Forbidden'
-import tempFolder from './components/tempFolder'
 import commonErrors from './components/commonErrors'
+import serverErrors from './components/serverErrors'
 export default {
   name: 'app',
   components: {
     Wordpress,
     commonErrors,
-    fourOhFour,
     Unknown,
-    Forbidden,
-    tempFolder
+    serverErrors
   },
   data () {
     return {
+      //  template booleans - determines if template is rendered
       wordpress: false,
       joomla: false,
       custom: false,
@@ -98,8 +85,9 @@ export default {
       notFound: false,
       unknown: false,
       forbidden: false,
-      tmp: false,
+      serverErr: false,
       common: false,
+      //  template data - rendered conditionally using v:bind
       commonErr: {
         errorType: '',
         causeOne: '',
@@ -108,6 +96,16 @@ export default {
         solutionOne: '',
         solutionTwo: '',
         solutionThree: ''
+      },
+      serverErrs: {
+        errorType: '',
+        link: '',
+        solutionOne: '',
+        solutionTwo: '',
+        solutionThree: '',
+        solutionFour: '',
+        solutionFive: '',
+        solutionSix: ''
       }
 
     }
@@ -227,7 +225,7 @@ export default {
       this.resetForm()
       this.common = true
       this.commonErr.errorType = '403 Forbidden'
-      this.commonErr.causeOne = 'Most commonErrly, this is caused when no index file is present in the document root (folder) the domain points to. Check the document root in Addon/Hosted domains.'
+      this.commonErr.causeOne = 'Most commonly, this is caused when no index file is present in the document root (folder) the domain points to.'
       this.commonErr.causeTwo = 'Valid file names: index.*, welcome.*, home.* and default.*(* html, php, aspx, asp, shtm, shtml, htm).'
       this.commonErr.causeThree = 'File names are case-sensitive in Linux - this means Index.html is not equal to index.html. This can, but does not always apply to Windows.'
       this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
@@ -237,14 +235,22 @@ export default {
     tmpEvent (tmpPath) {
       this.resetForm()
       if (tmpPath === 'session') {
-        this.tmp = true
+        this.serverErr = true
       } else {
         for (let t = 0; t < tmpPath.length; t++) {
           if (tmpPath[t] === 'tmp') {
-            this.tmp = true
+            this.serverErr = true
           }
         }
       }
+      this.serverErrs.errorType = 'tmp folder or session issue'
+      this.serverErrs.link = 'https://confluence.godaddy.com/download/attachments/20748053/phpinfo.php?version=2&modificationDate=1493746207000&api=v2&download=true'
+      this.serverErrs.solutionOne = 'For all types of hosting, first check for .ini files in root, home, public_html or httdocs that define /tmp as a specific location.'
+      this.serverErrs.solutionTwo = 'Disable this .ini file if it exists and have the customer test again or see if the error is resolved, if not continue to the next step.'
+      this.serverErrs.solutionThree = 'First download "phpinfo.php" from the Required Scripts column and upload it to the site root directory'
+      this.serverErrs.solutionFour = 'For cPanel, run a php info script and confirm that session.save_path is set to "/tmp". If not, go to a TL.'
+      this.serverErrs.solutionFive = 'For Plesk run a php info script and check that session.save_path is set to "C:\\Windows\\Temp" If not, got to a TL.'
+      this.serverErrs.solutionSix = 'For 4gh most likely the /tmp folder is full or missing. Take this issue to a TL.'
     },
     unknownEvent () {
       this.resetForm()

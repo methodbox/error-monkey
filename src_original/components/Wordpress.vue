@@ -37,7 +37,28 @@
                 </span>
               </td>
               <td class='mdl-data-table__cell--non-numeric'>
-                Sell WPPS
+                <ul class='mdl-list'>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      <h4>Offer Services</h4>
+                    </span>
+                  </li>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking
+                    </span>
+                  </li>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)
+                    </span>
+                  </li>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content more-serious">
+                      If there is indication of malware/hacking AND Theme/Plugin errors offer Sucuri Website Security and WPPS
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
             <tr>
@@ -68,7 +89,9 @@
   .full-width {
     width: 80%;
   }
-
+  .more-serious {
+    color: red;
+  }
   button#error-submit-button {
     margin-left: 20px;
     margin-top: 14px;

@@ -1,6 +1,6 @@
 <template>
   <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--8-col mdl-cell--1-offset">
+    <div class="mdl-cell mdl-cell--12-col">
       <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
         <thead>
           <tr>
@@ -17,7 +17,7 @@
                 <span class="mdl-chip__text ">{{serverErrs.errorType}}</span>
               </span>
             </td>
-            <td class='mdl-data-table__cell--non-numeric'>This error is usually a problem on the server.  It is likely this will need to go to a Tech Lead</td>
+            <td class='mdl-data-table__cell--non-numeric'>{{serverErrs.description}}</td>
             <td></td>
           </tr>
           <tr>
@@ -57,19 +57,19 @@
                     {{serverErrs.solutionThree}}
                   </span>
                 </li>
-                <li class="mdl-list__item">
+                <li class="mdl-list__item" v-if='serverErrs.solutionFour'>
                   <i class="material-icons">build</i>
                   <span class="mdl-list__item-primary-content">
                     {{serverErrs.solutionFour}}
                   </span>
                 </li>
-                <li class="mdl-list__item">
+                <li class="mdl-list__item" v-if='serverErrs.solutionFive'>
                   <i class="material-icons">build</i>
                   <span class="mdl-list__item-primary-content">
                     {{serverErrs.solutionFive}}
                   </span>
                 </li>
-                <li class="mdl-list__item">
+                <li class="mdl-list__item" v-if='serverErrs.solutionSix'>
                   <i class="material-icons">build</i>
                   <span class="mdl-list__item-primary-content">
                     {{serverErrs.solutionSix}}

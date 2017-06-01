@@ -1,79 +1,85 @@
 <template>
   <!--  WordPress Error Template  -->
-  <div>
-    <div class="mdl-grid">
-      <div class="mdl-cell mdl-cell--12-col">
-        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
-          <thead>
-            <tr>
-              <th class="mdl-data-table__cell--non-numeric">Error</th>
-              <th class="mdl-data-table__cell--non-numeric">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class='mdl-data-table__cell--non-numeric text-right'>
-                <span class="mdl-chip mdl-chip--contact">
-                  <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">Err</span>
-                  <span class="mdl-chip__text ">{{wp.wpErrorName}}</span>
-                </span>
-              </td>
-              <td class='mdl-data-table__cell--non-numeric'>This error is always caused by a problem with the application.</td>
-            </tr>
-            <tr>
-              <td class='mdl-data-table__cell--non-numeric text-right'>
-                <span class="mdl-chip mdl-chip--contact">
-                  <span class="mdl-chip__contact mdl-color--orange mdl-color-text--white">C</span>
-                  <span class="mdl-chip__text">Caused by Theme or Plugin</span>
-                </span>
-              </td>
-              <td class='mdl-data-table__cell--non-numeric'>{{wp.themePlug}}</td>
-            </tr>
-            <tr>
-              <td class='mdl-data-table__cell--non-numeric text-right'>
-                <span class="mdl-chip mdl-chip--contact">
-                  <span class="mdl-chip__contact mdl-color--purple mdl-color-text--white">S</span>
-                  <span class="mdl-chip__text">Recommended Solution</span>
-                </span>
-              </td>
-              <td class='mdl-data-table__cell--non-numeric'>
-                <ul class='mdl-list'>
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                      <h4>Offer Services</h4>
-                    </span>
-                  </li>
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                      Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking
-                    </span>
-                  </li>
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                      Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)
-                    </span>
-                  </li>
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content more-serious">
-                      If there is indication of malware/hacking AND Theme/Plugin errors offer Sucuri Website Security and WPPS
-                    </span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td class='mdl-data-table__cell--non-numeric'>
-                Additional Suggestions:
+  <div class="row">
+    <div class="col s10 offset-s1">
+      <table class="bordered highlight">
+        <thead>
+          <tr>
+            <th>Error</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="chip">
+                <span class="chip-label red accent-3">E</span>
+                {{wp.wpErrorName}}
+              </div>
+            </td>
+            <td>This error is always caused by a problem with the application.</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip">
+                <span class="chip-label orange accent-3">C</span>
+                Caused by Theme or Plugin
+              </div>
+            </td>
+            <td>{{wp.themePlug}}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip">
+                <span class="chip-label deep-purple">S</span>
+                Recommended Solution
+              </div>
+            </td>
+            <td class="row">
+              <div class="col s12 table-data-row">
                 <ul>
-                  <li>Refer them to their developer</li>
-                  <li>Suggest running updates, if possible</li>
-                  <li>Refer to the theme or plugin developer</li>
+                  <li>
+                    <h4>Offer Services</h4>
+                  </li>
+                  <li>
+                    Offer <span class="wpps">WPPS</span> - if issue is related to Theme/Plugin and NOT malware/hacking
+                  </li>
+                  <li>
+                    Offer <span class="web-sec">Sucuri Website Security</span> if there is indication of <span class="more-serious">malware/hacking</span> (see: Additional Suggestions)
+                  </li>
+                  <li>
+                    If there is indication of malware/hacking AND Theme/Plugin errors offer <span class="web-sec">Sucuri Website Security</span> and <span class="wpps">WPPS</span>
+                  </li>
                 </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <div class="col s12">
+              <div class="suggestions-list">
+                <td>
+                  <h5>Additional Suggestions:</h5>
+                  <ul>
+                    <li>Refer them to their developer</li>
+                    <li>Suggest running updates, if possible</li>
+                    <li>Refer to the theme or plugin developer</li>
+                    <li>Advise them WordPress.org provides guidance.</li>
+                    <br>
+                    <li>Look for signs of <span class='more-serious'>malware and hacking</span></li>
+                    <div class="li-padding">
+                      <li>Suspicious or odd file names</li>
+                      <li>Excessive folders and files (exa. folder w/hundreds of html files with common brand names)</li>
+                      <li>Review htaccess or web.config for references to odd file names</li>
+                      <li>Review htaccess or web.config for references to odd domain names</li>
+                    </div>
+                  </ul>
+                </td>
+              </div>
+            </div>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -91,9 +97,5 @@
   }
   .more-serious {
     color: red;
-  }
-  button#error-submit-button {
-    margin-left: 20px;
-    margin-top: 14px;
   }
 </style>

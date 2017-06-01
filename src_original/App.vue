@@ -6,9 +6,10 @@
         <div class="navbar-fixed">
           <nav class="nav-color">
             <div class="nav-wrapper">
-              <a href="/" class="brand-logo">Error Monkey</a>
+              <a href="#" class="brand-logo">Error Monkey</a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions</a></li>
+                <li><a class="nav-links" v-on:click="feedbackEvent">Feedback</a></li>
                 <li><a class="nav-links" v-on:click="unknownEvent">Report a Bug</a></li>
               </ul>
             </div>
@@ -16,7 +17,7 @@
         </div>
       </div>
     </header>
-    <div>
+    <div class='mdl-layout__content'>
       <div id="app">
         <div class="row">
           <div class="col s4 offset-s4">
@@ -28,7 +29,7 @@
           </div>
         </div>
         <form v-on:submit.prevent="errorFormSubmit" autocomplete="">
-          <div class="row" id='error-field-row'>
+          <div class="row">
             <div class="col s5 offset-s3">
               <div class="input-field full-width">
                 <input type="text" name="Test Field" id="error-field" v-on:click="searchReset">
@@ -62,6 +63,11 @@
             <unknown></unknown>
           </div>
         </div>
+        <div class="row" v-if='feedbackForm'>
+          <div class="col s12">
+            <feedback></feedback>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -73,6 +79,7 @@ import Unknown from './components/Unknown'
 import commonErrors from './components/commonErrors'
 import serverErrors from './components/serverErrors'
 import Instructions from './components/Instructions'
+import Feedback from './components/Feedback'
 export default {
   name: 'app',
   components: {
@@ -80,7 +87,8 @@ export default {
     commonErrors,
     Unknown,
     serverErrors,
-    Instructions
+    Instructions,
+    Feedback
   },
   data () {
     return {
@@ -112,9 +120,7 @@ export default {
       serverErrs: {
         errorType: '',
         description: '',
-        scriptLink: '',
-        helpLink: '',
-        helpLinkBool: false,
+        link: '',
         solutionOne: '',
         solutionTwo: '',
         solutionThree: '',
@@ -151,7 +157,7 @@ export default {
       //  parse the error sent from errorFormSubmit
       for (let u = 0; u < 6; u++) {
         //  grabs the general error and passes it to
-        this.wp.wpErrorName += errorArray[u].substring(0, 5) + ' '
+        this.wp.wpErrorName += errorArray[u].substring(0, 30) + ' '
       }
       //  evaluate the WP error type and pass the path of the file calling the error to wpEvaluate()
       if (errorArray[2] === 'Call') {
@@ -197,8 +203,6 @@ export default {
         this.tmpEvent(splitError[2].split('/'))
       } else if (splitError[1] === 'session_start():') {
         this.tmpEvent(splitError[4])
-      } else if (errorText.value === 'Error establishing a database connection') {
-        this.fiveHundredEvent()
       } else if (splitError[0] === '') {
         this.resetForm()
       } else {
@@ -215,9 +219,23 @@ export default {
       this.commonErr.causeOne = 'This is a configuration issue.'
       this.commonErr.causeTwo = 'This issue may be caused by the server configuration, but is usually due to a missing or broken htaccess or web.config file.'
       this.commonErr.causeThree = 'If this issue is occurring on the home page, it is possible that something more serious is happening. Review Additional Suggestions.'
-      this.commonErr.solutionOne = 'Offer WPPS for WordPress sites after verifying this is not related to malware/hacking (See: Additional Suggestions)'
+      this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
       this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
+      this.commonErr.solutionThree = 'Offer Sucuri if signs of malware/hacking are found (see: Additional Suggestions)'
       this.common = true
+    },
+    iseEvent () {
+      this.resetForm()
+      this.serverErrs.errorType = '500 Internal Server Error'
+      this.serverErrs.description = 'This error is generic and means the application had a problem, but may be related to a problem on the server.'
+      this.serverErrs.link = 'http://localhost:3000'
+      this.serverErrs.solutionOne = 'If this is a PHP-based site (check for index.php), trying running a test script. You can download one from the Required Script column.'
+      this.serverErrs.solutionTwo = 'If your test script also produces a 500 or ISE error, try disabling the .htaccess file. If the error still occurs, take this to a Tech Lead.'
+      this.serverErrs.solutionThree = 'If your test script worked and this is not a WordPress site, the customer or their developer will need to address the issue on their own.'
+      this.serverErrs.solutionFour = 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
+      this.serverErrs.solutionFive = ''
+      this.serverErrs.solutionSix = ''
+      this.serverErr = true
     },
     forbiddenEvent () {
       this.resetForm()
@@ -227,49 +245,20 @@ export default {
       this.commonErr.causeThree = 'File names are case-sensitive in Linux - this means Index.html is not equal to index.html. This can, but does not always apply to Windows.'
       this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
       this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
+      this.commonErr.solutionThree = 'Offer Sucuri if signs of malware/hacking are found (see: Additional Suggestions)'
       this.common = true
-    },
-    fiveHundredEvent () {
-      this.resetForm()
-      this.serverErrs.errorType = 'Database connection'
-      this.serverErrs.description = 'Something has prevented the application from connecting to the database. This can be an application or server issue.'
-      this.serverErrs.scriptLink = 'https://confluence.godaddy.com/download/attachments/20748053/mysql.php?version=3&modificationDate=1434049926000&api=v2&download=true'
-      this.serverErrs.helpLinkBool = true
-      this.serverErrs.helpLink = 'https://www.godaddy.com/help/what-are-the-connection-strings-for-my-applications-database-5199'
-      this.serverErrs.solutionOne = 'First make sure the DB exists. Ask the customer for the DB name. Or find it in the config file: '
-      this.serverErrs.solutionTwo = 'If this is cPanel or Plesk, make sure there is a user assigned to the database.'
-      this.serverErrs.solutionThree = 'Try to access the DB via PHPMyAdmin - if this is accessible, then the app should be able to connect, too.'
-      this.serverErrs.solutionFour = 'Use the script from Required Scripts column to test the connection w/your own user/password.'
-      this.serverErrs.solutionFive = 'If neither PHPMyAdmin or your test script can connect to the database, take this issue to a Tech Lead'
-      this.serverErrs.solutionSix = 'If your test script worked and this IS a WordPress site offer WPPS.'
-      this.serverErr = true
-    },
-    iseEvent () {
-      this.resetForm()
-      this.serverErrs.errorType = '500 Internal Server Error'
-      this.serverErrs.description = 'This error is generic and means the application had a problem, but may be related to a problem on the server.'
-      this.serverErrs.link = 'http://localhost:3000'
-      this.serverErrs.helpLinkBool = false
-      this.serverErrs.solutionOne = 'If this is a PHP-based site (check for index.php), trying running a test script. You can download one from the Required Script column.'
-      this.serverErrs.solutionTwo = 'If your test script also produces a 500 or ISE error, try disabling the .htaccess file. If the error still occurs, take this to a Tech Lead.'
-      this.serverErrs.solutionThree = 'If your test script worked and this is not a WordPress site, the customer or their developer will need to address the issue on their own.'
-      this.serverErrs.solutionFour = 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
-      this.serverErrs.solutionFive = ''
-      this.serverErrs.solutionSix = ''
-      this.serverErr = true
     },
     tmpEvent (tmpPath) {
       this.resetForm()
       this.serverErrs.errorType = 'tmp folder or session issue'
       this.serverErrs.description = 'This error is usually a problem on the server.  It is likely this will need to go to a Tech Lead'
       this.serverErrs.link = 'https://confluence.godaddy.com/download/attachments/20748053/phpinfo.php?version=2&modificationDate=1493746207000&api=v2&download=true'
-      this.serverErrs.helpLinkBool = false
-      this.serverErrs.solutionOne = 'All hosting: check for .ini files in root, home, public_html or httdocs that define /tmp as a specific location'
-      this.serverErrs.solutionTwo = 'Disable any .ini file and have the customer test again, continue to the next step if not resolved'
+      this.serverErrs.solutionOne = 'For all types of hosting, first check for .ini files in root, home, public_html or httdocs that define /tmp as a specific location.'
+      this.serverErrs.solutionTwo = 'Disable this .ini file if it exists and have the customer test again or see if the error is resolved, if not continue to the next step.'
       this.serverErrs.solutionThree = 'First download "phpinfo.php" from the Required Scripts column and upload it to the site root directory'
-      this.serverErrs.solutionFour = 'cPanel: Visit domain.com/phpinfo.php. Verify session.save_path is set to "/tmp". If not, go to a TL'
-      this.serverErrs.solutionFive = 'Plesk: Visit domain.com/phpinfo.php. Verify session.save_path is set to "C:\\Windows\\Temp" If not, got to a TL'
-      this.serverErrs.solutionSix = 'For 4gh most likely the /tmp folder is full or missing. Take this issue to a TL'
+      this.serverErrs.solutionFour = 'For cPanel, run a php info script and confirm that session.save_path is set to "/tmp". If not, go to a TL.'
+      this.serverErrs.solutionFive = 'For Plesk run a php info script and check that session.save_path is set to "C:\\Windows\\Temp" If not, got to a TL.'
+      this.serverErrs.solutionSix = 'For 4gh most likely the /tmp folder is full or missing. Take this issue to a TL.'
       if (tmpPath === 'session') {
         this.serverErr = true
       } else {
@@ -283,6 +272,10 @@ export default {
     unknownEvent () {
       this.resetForm()
       this.unknown = true
+    },
+    feedbackEvent () {
+      this.resetForm()
+      this.feedbackForm = true
     }
   }
 }
@@ -295,9 +288,6 @@ export default {
   nav.nav-color {
     background: #fff;
   }
-  a {
-   color: rgb(255,64,129)
-  }
   a.brand-logo {
     padding-left: 50px;
   }
@@ -306,6 +296,16 @@ export default {
   }
   div.table-data-row {
     border-left: 1px solid rgb(255,64,129)
+  }
+  button#submit-button {
+    margin-top: 20px;
+  }
+  .col.s2.button-spacing {
+    width: 200px;
+    margin-left: -40px;
+  }
+  .chip {
+    margin-left: 40%;
   }
   span.chip-label {
       float: left;
@@ -318,46 +318,6 @@ export default {
       font-weight: 600;
       font-size: 20px;
   }
-  .chip {
-    margin-left: 10%;
-  }
-  .td-chip {
-    min-width: 300px;
-  }
-  .col.s2.button-spacing {
-    width: 200px;
-    margin-left: -40px;
-  }
-  .li-padding {
-    border-left: 1px solid rgb(255,64,129);
-    padding-left: 20px;
-    margin-top: 5px;
-    line-height: 2;
-  }
-  .suggestions-list {
-    padding-left: 16px;
-  }
-  .wpps {
-    color: #0073aa;
-    font-weight: 600;
-  }
-  .web-sec {
-    color: darkorchid;
-    font-weight: 600;
-  }
-  .wp {
-    color: #0073aa;
-  }
-  input#error-field:focus {
-    border-bottom: 1px solid #304ffe;
-    box-shadow: 0 1px 0 0 #304ffe;
-  }
-  input#error-field:focus+label {
-    color: #304ffe;
-  }
-  button#submit-button {
-    margin-top: 20px;
-  }
   #app {
     font-family: 'Lato', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -366,7 +326,11 @@ export default {
     color: #2c3e50;
     margin-top: 60px;
   }
-  #nav-mobile {
-    padding-right: 50px;
+  input#error-field:focus {
+    border-bottom: 1px solid #304ffe;
+    box-shadow: 0 1px 0 0 #304ffe;
+  }
+  input#error-field:focus+label {
+    color: #304ffe;
   }
 </style>

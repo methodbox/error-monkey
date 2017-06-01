@@ -1,5 +1,4 @@
 <template>
-  <!--  commonErrors template  -->
   <div class="row">
     <div class="col s10 offset-s1">
       <table class="bordered highlight">
@@ -58,10 +57,10 @@
                   <li>
                     <h4>Offer Services</h4>
                   </li>
-                  <li class="wpps">
+                  <li>
                     {{commonErr.solutionOne}}
                   </li>
-                  <li class="web-sec">
+                  <li>
                     {{commonErr.solutionTwo}}
                   </li>
                   <li>
@@ -72,23 +71,26 @@
             </td>
           </tr>
           <tr>
-            <td></td>
             <td>
               <div class="col s12">
                 <div class="suggestions-list">
                   <h5>Additional Suggestions:</h5>
-                  <ul>
+                  <ul class="list-circle">
                     <li>Review the files to be sure an index file is found</li>
                     <li>Refer them to their developer</li>
                     <li>Advise them WordPress.org provides guidance.</li>
-                    <br>
-                    <li>Look for signs of <span class='more-serious'>malware and hacking</span></li>
-                    <div class="li-padding">
-                      <li>Suspicious or odd file names</li>
-                      <li>Excessive folders and files (exa. folder w/hundreds of html files with common brand names)</li>  
-                      <li>Review htaccess or web.config for references to odd file names</li>
-                      <li>Review htaccess or web.config for references to odd domain names</li>
-                    </div>
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="col s12">
+                <div class="suggestions-list">
+                  <ul class="list-circle">
+                    <li>Look for signs of <span class='more-serious'>malware and hacking</span>
+                    <li>Suspicious or odd file names</li>
+                    <li>Review htaccess or web.config for references to odd file names</li>
+                    <li>Review htaccess or web.config for references to odd domain names</li>
                   </ul>
                 </div>
               </div>
@@ -107,7 +109,13 @@ export default {
 </script>
 
 <style lang="css">
+  ul.list-circle > li{
+    list-style-type: circle;
+  }
   .more-serious {
     color: red;
+  }
+  .suggestions-list {
+    padding-left: 16px;
   }
 </style>

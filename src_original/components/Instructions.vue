@@ -25,11 +25,11 @@ export default {
     font-style: italic;
     color: deeppink;
   }
-  .read-carefully > span {
-    font-weight: bold;
-  }
   p.read-carefully {
     margin-bottom: 8px;
+  }
+  .read-carefully > span {
+    font-weight: bold;
   }
   ul.list-circle > li{
     list-style-type: circle;

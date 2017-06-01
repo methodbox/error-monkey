@@ -1,98 +1,86 @@
 <template>
-  <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--12-col">
-      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+  <div class="row">
+    <div class="col s10 offset-s1">
+      <table class="bordered highlight">
         <thead>
           <tr>
-            <th class="mdl-data-table__cell--non-numeric">Error</th>
-            <th class="mdl-data-table__cell--non-numeric">Description</th>
-            <th class="mdl-data-table__cell--non-numeric">Required Script</th>
+            <th>Error</th>
+            <th>Description</th>
+            <th>Required Script</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class='mdl-data-table__cell--non-numeric text-right'>
-              <span class="mdl-chip mdl-chip--contact">
-                <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">F</span>
-                <span class="mdl-chip__text ">{{serverErrs.errorType}}</span>
-              </span>
+            <td class="td-chip">
+              <div class="chip">
+                <span class="chip-label red accent-3">E</span>
+                {{serverErrs.errorType}}
+              </div>
             </td>
-            <td class='mdl-data-table__cell--non-numeric'>{{serverErrs.description}}</td>
+            <td>{{serverErrs.description}}</td>
             <td></td>
           </tr>
           <tr>
-            <td class='mdl-data-table__cell--non-numeric text-right'>
-              <span class="mdl-chip mdl-chip--contact">
-                <span class="mdl-chip__contact mdl-color--purple mdl-color-text--white">S</span>
-                <span class="mdl-chip__text">Recommended Solution</span>
-              </span>
+            <td class="td-chip">
+              <div class="chip">
+                <span class="chip-label deep-purple">S</span>
+                Recommended Solution
+              </div>
             </td>
-            <td class='mdl-data-table__cell--non-numeric'>
-              <ul class='mdl-list'>
-                <li class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
+            <td class='row'>
+              <div class="col s12 table-data-row">
+                <ul>
+                  <li>
                     <h4>Troubleshooting</h4>
-                  </span>
-                </li>
-                <li class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <h5>Follow the list below until a solution is found</h5>
-                  </span>
-                </li>
-                <li class="mdl-list__item">
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
-                    {{serverErrs.solutionOne}}
-                  </span>
-                </li>
-                <li class="mdl-list__item">
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
+                    {{serverErrs.solutionOne}} <a v-bind:href='serverErrs.helpLink' v-if='serverErrs.helpLinkBool'>Common Config</a>
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
                     {{serverErrs.solutionTwo}}
-                  </span>
-                </li>
-                <li class="mdl-list__item">
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
                     {{serverErrs.solutionThree}}
-                  </span>
-                </li>
-                <li class="mdl-list__item" v-if='serverErrs.solutionFour'>
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
                     {{serverErrs.solutionFour}}
-                  </span>
-                </li>
-                <li class="mdl-list__item" v-if='serverErrs.solutionFive'>
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
                     {{serverErrs.solutionFive}}
-                  </span>
-                </li>
-                <li class="mdl-list__item" v-if='serverErrs.solutionSix'>
-                  <i class="material-icons">build</i>
-                  <span class="mdl-list__item-primary-content">
+                  </li>
+                  <li>
+                    <i class="material-icons">build</i>
                     {{serverErrs.solutionSix}}
-                  </span>
-                </li>
-              </ul>
+                  </li>
+                </ul>
+              </div>
             </td>
-            <td>
-              <a v-bind:href='serverErrs.link'><i class='material-icons'>get_app</i></a>
-              <a v-bind:href='serverErrs.link' id='download-script'>Approved Script</a>
+            <td id="script-column">
+              <p>
+                <a v-bind:href='serverErrs.link'><i class='material-icons'>get_app</i></a>
+                <a v-bind:href='serverErrs.scriptLink' id='download-script'>Required Script</a>
+              </p>
             </td>
           </tr>
-          <tr id='suggestions-row'>
+          <tr>
             <td></td>
-            <td class='mdl-data-table__cell--non-numeric' id="suggestions-row-data">
-              <h4>Additional Suggestions:</h4>
-              <ul>
-                <li>If the issue was not resolved above and has been isolated to the application, this is likely a coding error.</li>
-                <li>The customer's application is probably trying to use the tmp folder by hard-coding the location in their app to the wrong location.</li>
-                <li id="if-wordpress-suggestion">If this is a WordPress site, we can offer WPPS at this point.</li>
-              </ul>
-            </td>
-            <td></td>
+            <div class="col s12">
+              <div class="suggestions-list">
+                <td>
+                  <h5>Additional Suggestions:</h5>
+                  <ul>
+                    <li>If the issue was not resolved above and has been isolated to the application, this is likely a coding error.</li>
+                    <li>The customer's application is probably trying to use the tmp folder by hard-coding the location in their app to the wrong location.</li>
+                    <li>If this is a <span class="wp">WordPress</span> site, we can offer <span class="wpps">WPPS</span> at this point.</li>
+                  </ul>
+                </td>
+              </div>
+            </div>
           </tr>
         </tbody>
       </table>
@@ -118,11 +106,11 @@ export default {
   .face-inner {
     color: grey;
   }
-  #if-wordpress-suggestion {
-    color: darkorchid;
-    font-weight: bold;
-  }
   #download-script {
     margin-left: 6px;
+    color: rgb(255,64,129);
+  }
+  #script-column {
+    min-width: 160px;
   }
 </style>

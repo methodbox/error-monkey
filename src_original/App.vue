@@ -6,7 +6,7 @@
         <div class="navbar-fixed">
           <nav class="nav-color">
             <div class="nav-wrapper">
-              <a href="/test" class="brand-logo">Error Monkey</a>
+              <a href="/" class="brand-logo">Error Monkey</a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions</a></li>
                 <li><a class="nav-links" v-on:click="unknownEvent">Report a Bug</a></li>
@@ -143,40 +143,6 @@ export default {
       this.common = false
       this.feedbackForm = false
     },
-    errorFormSubmit (event) {
-      let errorText = document.getElementById('error-field')
-      let splitError = errorText.value.split(' ')
-      if (splitError[0] === 'Fatal' ||
-      splitError[0] === 'Warning:' &&
-      !splitError[1] === 'Unknown:' &&
-      !splitError[1] === 'session_start():' &&
-      !splitError[0] === 'Internal' ||
-      splitError[0] === 'Parse'
-      ) {
-        this.wpError(splitError)
-        this.wordpress = true
-      } else if (splitError[0] + ' ' + splitError[1] === 'Installation failed:') {
-        this.wpError(splitError)
-        this.wordpress = true
-      } else if (splitError[5] === 'URL' && (splitError[16] === '404' || splitError[17] === '404')) {
-        this.notFoundEvent()
-      } else if (splitError[0] === 'Forbidden') {
-        this.forbiddenEvent()
-      } else if (splitError[0] === 'Internal') {
-        this.iseEvent()
-      } else if (splitError[1] === 'Unknown:') {
-        this.tmpEvent(splitError[2].split('/'))
-      } else if (splitError[1] === 'session_start():') {
-        this.tmpEvent(splitError[4])
-      } else if (errorText.value === 'Error establishing a database connection') {
-        this.fiveHundredEvent()
-      } else if (splitError[0] === '') {
-        this.resetForm()
-      } else {
-        this.unknownEvent()
-      }
-      this.searchReset()
-    },
     wpError (errorArray) {
       this.resetForm()
       //  reset WP-related fields for new error evaluation to prevent duplicates
@@ -184,12 +150,11 @@ export default {
       this.wp.themePlug = ''
       //  parse the error sent from errorFormSubmit
       for (let u = 0; u < 6; u++) {
-        //  grabs the general error and passes it to the page error field, truncates @ 15 chars
-        this.wp.wpErrorName += errorArray[u].substring(0, 15) + ' '
+        //  grabs the general error and passes it to
+        this.wp.wpErrorName += errorArray[u].substring(0, 5) + ' '
       }
       //  evaluate the WP error type and pass the path of the file calling the error to wpEvaluate()
       if (errorArray[2] === 'Call') {
-        //  pulls the applicable path to grab 'plugin' or 'theme' from the path
         this.wpEvaluate(errorArray[8].split('/'))
       } else if (errorArray[2] === 'Class') {
         this.wpEvaluate(errorArray[7].split('/'))
@@ -201,8 +166,6 @@ export default {
         this.wpEvaluate(errorArray[12].split('/'))
       } else if (errorArray[3] === 'redeclare') {
         this.wpEvaluate(errorArray[10].split('/'))
-      } else if (errorArray[0] + ' ' + errorArray[1] === 'Installation failed:') {
-        this.wp.themePlug = 'Theme or Plugin'
       }
     },
     wpEvaluate (errorPath) {
@@ -216,9 +179,32 @@ export default {
           this.wp.themePlug = 'Deprecated WP Function - out of date theme or plugin'
         }
       }
-      if (errorPath === 'either') {
-        this.wp.themePlug === 'Theme or Plugin'
+    },
+    errorFormSubmit (event) {
+      let errorText = document.getElementById('error-field')
+      let splitError = errorText.value.split(' ')
+      if (splitError[0] + ' ' + splitError[1] === 'Fatal error:' || splitError[0] === 'Warning:' && !splitError[1] === 'Unknown:' && !splitError[1] === 'session_start():' && !splitError[0] === 'Internal') {
+        this.wpError(splitError)
+        this.wordpress = true
+      } else if (splitError[5] === 'URL' && (splitError[16] === '404' || splitError[17] === '404')) {
+        this.notFoundEvent()
+      } else if (splitError[0] === 'Forbidden') {
+        this.forbiddenEvent()
+      } else if (splitError[0] === 'Internal') {
+        console.log('500 error')
+        this.iseEvent()
+      } else if (splitError[1] === 'Unknown:') {
+        this.tmpEvent(splitError[2].split('/'))
+      } else if (splitError[1] === 'session_start():') {
+        this.tmpEvent(splitError[4])
+      } else if (errorText.value === 'Error establishing a database connection') {
+        this.fiveHundredEvent()
+      } else if (splitError[0] === '') {
+        this.resetForm()
+      } else {
+        this.unknownEvent()
       }
+      this.searchReset()
     },
     searchReset () {
       document.getElementById('error-field').value = ''

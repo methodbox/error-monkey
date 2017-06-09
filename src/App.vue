@@ -44,12 +44,12 @@
         </form>
         <div class="row" v-if='wordpress'>
           <div class="col s12">
-            <wordpress v-bind:wp="wp"></wordpress>
+            <wordpress v-bind:wp="wp, errorName"></wordpress>
           </div>
         </div>
         <div class="row" v-if='common'>
           <div class="col s12">
-            <common-errors v-bind:commonErr='commonErr'></common-errors>
+            <common-errors v-bind:commonErrors='commonErrors'></common-errors>
           </div>
         </div>
         <div class="row" v-if='serverErr'>
@@ -60,6 +60,11 @@
         <div class="row" v-if='unknown'>
           <div class="col s12">
             <unknown></unknown>
+          </div>
+        </div>
+        <div class="row" v-if='testView'>
+          <div class="col s12">
+            <test v-bind:test='test'></test>
           </div>
         </div>
       </div>
@@ -73,6 +78,7 @@ import Unknown from './components/Unknown'
 import commonErrors from './components/commonErrors'
 import serverErrors from './components/serverErrors'
 import Instructions from './components/Instructions'
+import Test from './components/Test'
 export default {
   name: 'app',
   components: {
@@ -80,35 +86,36 @@ export default {
     commonErrors,
     Unknown,
     serverErrors,
-    Instructions
+    Instructions,
+    Test
   },
   data () {
     return {
-      //  template booleans - determines if template is rendered
       nav: {
+        //  conditional for displaying Instructions on-click
         instr: false
       },
+      //  booleans to determine which template is rendered
       wordpress: false,
-      joomla: false,
-      custom: false,
+      common: false,
+      testView: false,
+      test: false,
+      //  A short description of the error - WP & Server error templates are passed this value
+      errorName: '',
+      //  WP specific errors template
       wp: {
-        wpErrorName: '',
         themePlug: ''
       },
-      unknown: false,
-      serverErr: false,
-      common: false,
-      feedbackForm: false,
-      //  template data - rendered conditionally using v:bind
-      commonErr: {
-        errorType: '',
-        causeOne: '',
-        causeTwo: '',
-        causeThree: '',
-        solutionOne: '',
-        solutionTwo: '',
-        solutionThree: ''
+      //  common errors template
+      commonErrors: {
+        notFound: false,
+        forbidden: false
       },
+      //  unrecognized errors template
+      unknown: false,
+      //  server errors template
+      serverErr: false,
+      feedbackForm: false,
       serverErrs: {
         errorType: '',
         description: '',
@@ -135,113 +142,73 @@ export default {
     },
     resetForm () {
       this.wordpress = false
-      this.wp.formSubmitted = false
-      this.joomla = false
-      this.custom = false
-      this.unknown = false
-      this.serverErr = false
       this.common = false
-      this.feedbackForm = false
+      this.commonErrors.forbidden = false
+      this.commonErrors.notFound = false
     },
     errorFormSubmit (event) {
-      let errorText = document.getElementById('error-field')
-      let splitError = errorText.value.split(' ')
-      if (splitError[0] === 'Fatal' ||
-      splitError[0] === 'Warning:' &&
-      !splitError[1] === 'Unknown:' &&
-      !splitError[1] === 'session_start():' &&
-      !splitError[0] === 'Internal' ||
-      splitError[0] === 'Parse'
-      ) {
-        this.wpError(splitError)
-        this.wordpress = true
-      } else if (splitError[0] + ' ' + splitError[1] === 'Installation failed:') {
-        this.wpError(splitError)
-        this.wordpress = true
-      } else if (splitError[5] === 'URL' && (splitError[16] === '404' || splitError[17] === '404')) {
-        this.notFoundEvent()
-      } else if (splitError[0] === 'Forbidden') {
-        this.forbiddenEvent()
-      } else if (splitError[0] === 'Internal') {
-        this.iseEvent()
-      } else if (splitError[1] === 'Unknown:') {
-        this.tmpEvent(splitError[2].split('/'))
-      } else if (splitError[1] === 'session_start():') {
-        this.tmpEvent(splitError[4])
-      } else if (errorText.value === 'Error establishing a database connection') {
-        this.fiveHundredEvent()
-      } else if (splitError[0] === '') {
-        this.resetForm()
-      } else {
-        this.unknownEvent()
-      }
-      this.searchReset()
-    },
-    wpError (errorArray) {
       this.resetForm()
-      //  reset WP-related fields for new error evaluation to prevent duplicates
-      this.wp.wpErrorName = ''
-      this.wp.themePlug = ''
-      //  parse the error sent from errorFormSubmit
-      for (let u = 0; u < 6; u++) {
-        //  grabs the general error and passes it to the page error field, truncates @ 15 chars
-        this.wp.wpErrorName += errorArray[u].substring(0, 15) + ' '
+      let errorText = document.getElementById('error-field')
+      let parseError = errorText.value.split(' ')
+      let wpParseError = errorText.value.split('/')
+      let wpFilter = wpParseError.filter(function (err) {
+        if (err === 'themes' || err === 'plugins' || err === 'wp-admin') {
+          return err
+        }
+      })
+      let commonFilter = parseError.filter(function (err) {
+        if (err === 'Forbidden' || err === 'Not' || err === 'Found') {
+          return err
+        }
+      })
+      let serverFilter = parseError.filter(function (err) {
+        console.log(err)
+      })
+      //  sends to wpEvaluate to determine if the error is WP if wpFilter is not empty
+      if (wpFilter.length !== 0) {
+        this.wpEvaluate(wpFilter)
+        this.errorName = errorText.value.substring(0, 12)
       }
-      //  evaluate the WP error type and pass the path of the file calling the error to wpEvaluate()
-      if (errorArray[2] === 'Call') {
-        //  pulls the applicable path to grab 'plugin' or 'theme' from the path
-        this.wpEvaluate(errorArray[8].split('/'))
-      } else if (errorArray[2] === 'Class') {
-        this.wpEvaluate(errorArray[7].split('/'))
-      } else if (errorArray[1] === 'Unknown:') {
-        this.wpEvaluate(errorArray[2].split('/'))
-      } else if (errorArray[2] === 'require_once():') {
-        this.wpEvaluate(errorArray[9].split('/'))
-      } else if (errorArray[0] === 'Warning:') {
-        this.wpEvaluate(errorArray[12].split('/'))
-      } else if (errorArray[3] === 'redeclare') {
-        this.wpEvaluate(errorArray[10].split('/'))
-      } else if (errorArray[0] + ' ' + errorArray[1] === 'Installation failed:') {
-        this.wp.themePlug = 'Theme or Plugin'
+      //  fires common event if commonFilter is not empty
+      if (commonFilter.length !== 0) {
+        this.commonEvent(commonFilter)
+      }
+      //  fires server error event if serverFilter is not empty
+      if (serverFilter.length !== 0) {
+        console.log('test')
       }
     },
     wpEvaluate (errorPath) {
+      let wpError = errorPath[0]
       //  gets the path of the file calling the error and parses out theme or plugin
-      for (let e = 0; e < errorPath.length; e++) {
-        if (errorPath[e] === 'themes') {
-          this.wp.themePlug = 'Theme'
-        } else if (errorPath[e] === 'plugins') {
-          this.wp.themePlug = 'Plugin'
-        } else if (errorPath[e] === 'wp-admin') {
-          this.wp.themePlug = 'Deprecated WP Function - out of date theme or plugin'
-        }
+      if (wpError === 'themes') {
+        console.log('Theme')
+        this.wordpress = true
+        this.wp.themePlug = 'Theme'
+      } else if (wpError === 'plugins') {
+        console.log('Plugins')
+        this.wordpress = true
+        this.wp.themePlug = 'Plugin'
+      } else if (wpError === 'wp-admin') {
+        console.log('Either')
+        this.wordpress = true
+        this.wp.themePlug = 'Theme or Plugin'
       }
-      if (errorPath === 'either') {
-        this.wp.themePlug === 'Theme or Plugin'
+    },
+    commonEvent (commonErrorType) {
+      this.common = true
+      if (commonErrorType[0] === 'Forbidden') {
+        this.commonErrors.forbidden = true
+      } else if (commonErrorType[0] + ' ' + commonErrorType[1] === 'Not Found') {
+        this.commonErrors.notFound = true
       }
     },
     searchReset () {
       document.getElementById('error-field').value = ''
     },
-    notFoundEvent () {
-      this.resetForm()
-      this.commonErr.errorType = '404 Not Found'
-      this.commonErr.causeOne = 'This is a configuration issue.'
-      this.commonErr.causeTwo = 'This issue may be caused by the server configuration, but is usually due to a missing or broken htaccess or web.config file.'
-      this.commonErr.causeThree = 'If this issue is occurring on the home page, it is possible that something more serious is happening. Review Additional Suggestions.'
-      this.commonErr.solutionOne = 'Offer WPPS for WordPress sites after verifying this is not related to malware/hacking (See: Additional Suggestions)'
-      this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
-      this.common = true
-    },
-    forbiddenEvent () {
-      this.resetForm()
-      this.commonErr.errorType = '403 Forbidden'
-      this.commonErr.causeOne = 'Most commonly, this is caused when no index file is present in the document root (folder) the domain points to.'
-      this.commonErr.causeTwo = 'Valid file names: index.*, welcome.*, home.* and default.*(* html, php, aspx, asp, shtm, shtml, htm).'
-      this.commonErr.causeThree = 'File names are case-sensitive in Linux - this means Index.html is not equal to index.html. This can, but does not always apply to Windows.'
-      this.commonErr.solutionOne = 'Offer WPPS - if issue is related to Theme/Plugin and NOT malware/hacking'
-      this.commonErr.solutionTwo = 'Offer Sucuri Website Security if there is indication of malware/hacking (see: Additional Suggestions)'
-      this.common = true
+    testEvent () {
+      this.test = true
+      this.testView = true
     },
     fiveHundredEvent () {
       this.resetForm()

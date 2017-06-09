@@ -14,7 +14,7 @@
             <td>
               <div class="chip">
                 <span class="chip-label red accent-3">E</span>
-                {{wp.wpErrorName}}
+                {{errorName}}
               </div>
             </td>
             <td>This error is always caused by a problem with the application.</td>
@@ -86,7 +86,7 @@
 
 <script>
   export default {
-    props: ['wp']
+    props: ['wp', 'errorName']
     //  import our WP props from the main App.vue
   }
 </script>

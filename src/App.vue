@@ -109,7 +109,7 @@ export default {
       serverErrors: {
         tmp: false,
         internal: false,
-        fiveHundred: false
+        database: false
       }
     }
   },
@@ -143,7 +143,7 @@ export default {
       })
       //  filter out server error related values
       let serverFilter = parseError.filter(function (err) {
-        if (err === 'session_start():' || err === 'Unknown:') {
+        if (err === 'session_start():' || err === 'Unknown:' || err === 'database' || 'Internal') {
           return err
         }
       })
@@ -187,6 +187,12 @@ export default {
       if (serverError === 'session_start():' || serverError === 'Unknown:') {
         this.server = true
         this.serverErrors.tmp = true
+      } else if (serverError === 'database') {
+        this.server = true
+        this.serverErrors.database = true
+      } else if (serverError === 'Internal') {
+        this.server = true
+        this.serverErrors.internal = true
       }
     },
     unknownEvent () {

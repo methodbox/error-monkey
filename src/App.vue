@@ -1,66 +1,62 @@
 <template>
   <div>
     <header>
-      <div>
-        <!-- nav -->
-        <div class="navbar-fixed">
-          <nav class="nav-color">
-            <div class="nav-wrapper">
-              <a href="/test" class="brand-logo">Error Monkey</a>
-              <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions</a></li>
-                <li><a class="nav-links" v-on:click="unknownEvent">Report a Bug</a></li>
-              </ul>
-            </div>
-          </nav>
-        </div>
+      <!-- nav -->
+      <div class="navbar-fixed">
+        <nav class="nav-color">
+          <div class="nav-wrapper">
+            <a href="/test" class="brand-logo">Error Monkey</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions</a></li>
+              <li><a class="nav-links" v-on:click="unknownEvent">Report a Bug</a></li>
+            </ul>
+          </div>
+        </nav>
       </div>
     </header>
-    <div>
-      <div id="app">
-        <div class="row">
-          <div class="col s4 offset-s4">
-            <img src="./assets/error-monkey-icon@0.25x.png">
-            <h3>Error Monkey</h3>
-          </div>
-          <div class="col s4">
-            <instructions v-if="nav.instr"></instructions>
-          </div>
+    <div id="app">
+      <div class="row">
+        <div class="col s4 offset-s4">
+          <img src="./assets/error-monkey-icon@0.25x.png">
+          <h3>Error Monkey</h3>
         </div>
-        <form v-on:submit.prevent="errorFormSubmit" autocomplete="">
-          <div class="row" id='error-field-row'>
-            <div class="col s5 offset-s3">
-              <div class="input-field full-width">
-                <input type="text" name="Test Field" id="error-field" v-on:click="searchReset">
-                <label for="error-field">Enter the Error (cut and paste directly from the web page)</label>
-              </div>
-            </div>
-            <div class="col s2 button-spacing">
-              <button class="waves-effect waves-light btn pink accent-2" id="submit-button" type="button" v-on:click="errorFormSubmit">
-                Fix Me
-              </button>
+        <div class="col s4">
+          <instructions v-if="nav.instr"></instructions>
+        </div>
+      </div>
+      <form v-on:submit.prevent="errorFormSubmit" autocomplete="">
+        <div class="row" id='error-field-row'>
+          <div class="col s5 offset-s3">
+            <div class="input-field full-width">
+              <input type="text" name="Test Field" id="error-field" v-on:click="searchReset">
+              <label for="error-field">Enter the Error (cut and paste directly from the web page)</label>
             </div>
           </div>
-        </form>
-        <div class="row" v-if='wordpress'>
-          <div class="col s12">
-            <wordpress v-bind:wp="wp, errorName"></wordpress>
+          <div class="col s2 button-spacing">
+            <button class="waves-effect waves-light btn pink accent-2" id="submit-button" type="button" v-on:click="errorFormSubmit">
+              Fix Me
+            </button>
           </div>
         </div>
-        <div class="row" v-if='common'>
-          <div class="col s12">
-            <common-error v-bind:commonErrors='commonErrors'></common-error>
-          </div>
+      </form>
+      <div class="row" v-if='wordpress'>
+        <div class="col s12">
+          <wordpress v-bind:wp="wp, errorName"></wordpress>
         </div>
-        <div class="row" v-if='server'>
-          <div class="col s12">
-            <server-error v-bind:serverErrors='serverErrors'></server-error>
-          </div>
+      </div>
+      <div class="row" v-if='common'>
+        <div class="col s12">
+          <common-error v-bind:commonErrors='commonErrors'></common-error>
         </div>
-        <div class="row" v-if='unknown'>
-          <div class="col s12">
-            <unknown></unknown>
-          </div>
+      </div>
+      <div class="row" v-if='server'>
+        <div class="col s12">
+          <server-error v-bind:serverErrors='serverErrors'></server-error>
+        </div>
+      </div>
+      <div class="row" v-if='unknown'>
+        <div class="col s12">
+          <unknown></unknown>
         </div>
       </div>
     </div>
@@ -85,31 +81,25 @@ export default {
   data () {
     return {
       nav: {
-        //  conditional for displaying Instructions on-click
-        instr: false
+        instr: false //  conditional for displaying Instructions on-click
       },
-      //  A short description of the error - WP & Server error templates are passed this value
-      errorName: '',
-      //  booleans to determine which template is rendered
-      wordpress: false,
+      errorName: '', //  A short description of the error - WP & Server error templates are passed this value
+      wordpress: false, //  booleans to determine which template is rendered
       common: false,
       server: false,
-      //  unrecognized errors template
-      unknown: false,
-      //  WP errors template props
-      wp: {
+      unknown: false, //  unrecognized errors template
+      wp: { //  WP errors template props
         themePlug: ''
       },
-      //  common errors template props
-      commonErrors: {
+      commonErrors: { //  common errors template props
         notFound: false,
         forbidden: false
       },
-      //  server errors template props
-      serverErrors: {
+      serverErrors: { //  server errors template props
         tmp: false,
         internal: false,
-        database: false
+        database: false,
+        unknown: false
       }
     }
   },
@@ -117,8 +107,13 @@ export default {
     resetForm () {
       this.wordpress = false
       this.common = false
-      this.commonErrors.forbidden = false
+      this.server = false
       this.commonErrors.notFound = false
+      this.commonErrors.forbidden = false
+      this.serverErrors.tmp = false
+      this.serverErrors.internal = false
+      this.serverErrors.database = false
+      this.serverErrors.unknown = false
     },
     searchReset () {
       document.getElementById('error-field').value = ''
@@ -126,28 +121,44 @@ export default {
     errorFormSubmit () {
       this.resetForm()
       let errorText = document.getElementById('error-field')
-      let parseError = errorText.value.split(' ')// parse the error
-      let wpParseError = errorText.value.split('/')// parse the path in the error - looking for WP values
-      //  filter to determine the error type
-      let wpFilter = wpParseError.filter(function (err) {
-        //  filter out error-related values
-        if (err === 'themes' || err === 'plugins' || err === 'wp-admin') {
-          return err//  send them to an array
+      let parseError = errorText.value.split(' ') // parse the error
+      let wpParseError = errorText.value.split('/') // parse the path in the error - looking for WP values
+      const wpFilter = wpParseError.filter((err) => { //  filter to determine the error type
+        switch (err) {
+          case 'themes':
+            return err
+          case 'plugins':
+            return err
+          case 'wp-admin':
+            return err
         }
       })
-
-      let commonFilter = parseError.filter(function (err) {
-        if (err === 'Forbidden' || err === 'Not' || err === 'Found') {
-          return err
+      const commonFilter = parseError.filter((err) => {
+        switch (err) {
+          case 'Forbidden':
+            return err
+          case 'Not':
+            return err
+          case 'Found':
+            return err
         }
       })
-      //  filter out server error related values
-      let serverFilter = parseError.filter(function (err) {
-        if (err === 'session_start():' || err === 'Unknown:' || err === 'database' || 'Internal') {
-          return err
+      const serverFilter = parseError.filter((err) => {
+        switch (err) {
+          case 'session_start():':
+            return err
+          case 'Unknown:':
+            return err
+          case 'database':
+            return err
+          case 'Internal':
+            return err
+          case '500':
+            return err
+          case 'ERR_CONNECTION_REFUSED':
+            return err
         }
       })
-      //  evaluate the error down to specific template type
       if (wpFilter.length !== 0) { //  check if the err array has a value
         this.wpEvaluate(wpFilter) // fire a sub event to handle rendering the proper template
         this.errorName = errorText.value.substring(0, 12) // grab parse of error value and set as desc
@@ -158,42 +169,56 @@ export default {
       if (serverFilter.length !== 0) {
         this.serverEvent(serverFilter)
       }
-    },
-    //  template conditional rendering methods
-    wpEvaluate (errorPath) {
-      let wpError = errorPath[0]
-      //  gets the path of the file calling the error and parses out 'themes' or 'plugins'
-      if (wpError === 'themes') {
-        this.wordpress = true// sets the conditional to render the proper template
-        this.wp.themePlug = 'Theme' //  sets the theme or plugin value for WP template
-      } else if (wpError === 'plugins') {
-        this.wordpress = true
-        this.wp.themePlug = 'Plugin'
-      } else if (wpError === 'wp-admin' || wpError === 'wp-includes') {
-        this.wordpress = true
-        this.wp.themePlug = 'Theme or Plugin'
+      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0) {
+        this.unknownEvent()
       }
     },
+    wpEvaluate (errorPath) { //  conditional rendering methods for templates
+      let path = errorPath[0]
+      switch (path) {
+        case 'themes':
+          this.wp.themePlug = 'Theme'
+          break
+        case 'plugins':
+          this.wp.themePlug = 'Plugin'
+          break
+        case 'wp-admin':
+          this.wp.themePlug = 'Theme or Plugin'
+          break
+        case 'wp-includes':
+          this.wp.themePlug = 'Theme or Plugin'
+          break
+      }
+      this.wordpress = true
+    },
     commonEvent (commonErrorType) {
-      this.common = true
       if (commonErrorType[0] === 'Forbidden') {
         this.commonErrors.forbidden = true
       } else if (commonErrorType[0] + ' ' + commonErrorType[1] === 'Not Found') {
         this.commonErrors.notFound = true
       }
+      this.common = true
     },
     serverEvent (serverErrorType) {
-      let serverError = serverErrorType[0]
-      if (serverError === 'session_start():' || serverError === 'Unknown:') {
-        this.server = true
-        this.serverErrors.tmp = true
-      } else if (serverError === 'database') {
-        this.server = true
-        this.serverErrors.database = true
-      } else if (serverError === 'Internal') {
-        this.server = true
-        this.serverErrors.internal = true
+      let serverErrorValue = serverErrorType[0]
+      switch (serverErrorValue) {
+        case 'session_start():':
+          this.serverErrors.tmp = true
+          break
+        case 'Unknown:':
+          this.serverErrors.tmp = true
+          break
+        case 'database':
+          this.serverErrors.database = true
+          break
+        case 'Internal':
+          this.serverErrors.internal = true
+          break
+        case '500':
+          this.serverErrors.internal = true
+          break
       }
+      this.server = true
     },
     unknownEvent () {
       this.resetForm()
@@ -242,6 +267,8 @@ export default {
   }
   .chip {
     margin-left: 10%;
+    min-width: 140px;
+    overflow: hidden;
   }
   .td-chip {
     min-width: 300px;

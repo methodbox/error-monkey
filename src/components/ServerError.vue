@@ -14,10 +14,28 @@
             <td class="td-chip">
               <div class="chip">
                 <span class="chip-label red accent-3">E</span>
-                {{serverErrs.errorType}}
+                <div v-if='serverErrors.tmp'>
+                  {{tmpData.errorType}}
+                </div>
+                <div v-if='serverErrors.database'>
+                  {{databaseData.errorType}}
+                </div>
+                <div v-if='serverErrors.internal'>
+                  {{internalData.errorType}}
+                </div>
               </div>
             </td>
-            <td>{{serverErrs.description}}</td>
+            <td>
+              <div v-if='serverErrors.tmp'>
+                {{tmpData.description}}
+              </div>
+              <div v-if='serverErrors.database'>
+                {{databaseData.description}}
+              </div>
+              <div v-if='serverErrors.internal'>
+                {{internalData.description}}
+              </div>
+            </td>
             <td></td>
           </tr>
           <tr>
@@ -34,36 +52,106 @@
                     <h4>Troubleshooting</h4>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionOne}} <a v-bind:href='serverErrs.helpLink' v-if='serverErrs.helpLinkBool'>Common Config</a>
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionOne}} <a v-bind:href='tmpData.helpLink' v-if='tmpData.helpLinkBool'>Common Config</a>
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionOne}} <a v-bind:href='databaseData.helpLink' v-if='databaseData.helpLinkBool'>Common Config</a>
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool'>Common Config</a>
+                    </div>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionTwo}}
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionTwo}}
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionTwo}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionTwo}}
+                    </div>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionThree}}
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionThree}}
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionThree}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionThree}}
+                    </div>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionFour}}
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionFour}}
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionFour}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionFour}}
+                    </div>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionFive}}
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionFive}}
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionFive}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionFive}}
+                    </div>
                   </li>
                   <li>
-                    <i class="material-icons">build</i>
-                    {{serverErrs.solutionSix}}
+                    <div v-if='serverErrors.tmp'>
+                      <i class="material-icons">build</i>
+                      {{tmpData.solutionSix}}
+                    </div>
+                    <div v-if='serverErrors.database'>
+                      <i class="material-icons">build</i>
+                      {{databaseData.solutionSix}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionSix}}
+                    </div>
                   </li>
                 </ul>
               </div>
             </td>
             <td id="script-column">
               <p>
-                <a v-bind:href='serverErrs.link'><i class='material-icons'>get_app</i></a>
-                <a v-bind:href='serverErrs.scriptLink' id='download-script'>Required Script</a>
+                <div v-if='serverErrors.tmp'>
+                  <a v-bind:href='tmpData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='tmpData.scriptLink' id='download-script'>Required Script</a>
+                </div>
+                <div v-if='serverErrors.database'>
+                  <a v-bind:href='databaseData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='databaseData.scriptLink' id='download-script'>Required Script</a>
+                </div>
+                <div v-if='serverErrors.internal'>
+                  <a v-bind:href='internalData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='internalData.scriptLink' id='download-script'>Required Script</a>
+                </div>
               </p>
             </td>
           </tr>
@@ -90,7 +178,7 @@
 
 <script>
 export default {
-  props: ['serverErrs'],
+  props: ['serverErrors'],
   data () {
     return {
       tmpData: {
@@ -118,7 +206,7 @@ export default {
         solutionFive: 'If neither PHPMyAdmin or your test script can connect to the database, take this issue to a Tech Lead',
         solutionSix: 'If your test script worked and this IS a WordPress site offer WPPS.'
       },
-      fiveHundredData: {
+      internalData: {
         errorType: '500 Internal Server Error',
         description: 'This error is generic and means the application had a problem, but may be related to a problem on the server.',
         link: 'http://localhost:3000',

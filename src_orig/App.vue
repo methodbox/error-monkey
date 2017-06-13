@@ -59,11 +59,6 @@
           <unknown></unknown>
         </div>
       </div>
-      <div class="row" v-if='network'>
-        <div class="col s12">
-          <network-error v-bind:networkErrors='networkErrors'></network-error>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -73,7 +68,6 @@ import Wordpress from './components/Wordpress'
 import Unknown from './components/Unknown'
 import CommonError from './components/CommonError'
 import ServerError from './components/ServerError'
-import NetworkError from './components/NetworkError'
 import Instructions from './components/Instructions'
 export default {
   name: 'app',
@@ -81,7 +75,6 @@ export default {
     Wordpress,
     CommonError,
     ServerError,
-    NetworkError,
     Unknown,
     Instructions
   },
@@ -94,7 +87,6 @@ export default {
       wordpress: false, //  booleans to determine which template is rendered
       common: false,
       server: false,
-      network: false,
       unknown: false, //  unrecognized errors template
       wp: { //  WP errors template props
         themePlug: ''
@@ -108,10 +100,6 @@ export default {
         internal: false,
         database: false,
         unknown: false
-      },
-      networkErrors: {
-        connection: false,
-        dns: false
       }
     }
   },
@@ -119,16 +107,13 @@ export default {
     resetForm () {
       this.wordpress = false
       this.common = false
+      this.server = false
       this.commonErrors.notFound = false
       this.commonErrors.forbidden = false
-      this.server = false
       this.serverErrors.tmp = false
       this.serverErrors.internal = false
       this.serverErrors.database = false
       this.serverErrors.unknown = false
-      this.network = false
-      this.networkErrors.connection = false
-      this.networkErrors.dns = false
     },
     searchReset () {
       document.getElementById('error-field').value = ''
@@ -156,8 +141,6 @@ export default {
             return err
           case 'Found':
             return err
-          case 'wp()':
-            return err
         }
       })
       const serverFilter = parseError.filter((err) => {
@@ -172,37 +155,25 @@ export default {
             return err
           case '500':
             return err
-        }
-      })
-      const networkFilter = parseError.filter((err) => {
-        switch (err) {
           case 'ERR_CONNECTION_REFUSED':
-            return err
-          case 'ERR_NAME_NOT_RESOLVED':
             return err
         }
       })
       if (wpFilter.length !== 0) { //  check if the err array has a value
-        this.wpEvaluate(wpFilter, errorText) // fire a sub event to handle rendering the proper template
+        this.wpEvaluate(wpFilter) // fire a sub event to handle rendering the proper template
+        this.errorName = errorText.value.substring(0, 12) // grab parse of error value and set as desc
       }
       if (commonFilter.length !== 0) {
-        if (commonFilter[0] !== 'wp()') {
-          this.commonEvent(commonFilter)
-        } else if (commonFilter[0] === 'wp()') {
-          this.wpEvaluate(commonFilter, errorText)
-        }
+        this.commonEvent(commonFilter)
       }
       if (serverFilter.length !== 0) {
         this.serverEvent(serverFilter)
       }
-      if (networkFilter.length !== 0) {
-        this.networkEvent(networkFilter)
-      }
-      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && networkFilter === 0) {
+      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0) {
         this.unknownEvent()
       }
-    }, // end errorFormSubmit()
-    wpEvaluate (errorPath, errorName) { //  conditional rendering methods for templates
+    },
+    wpEvaluate (errorPath) { //  conditional rendering methods for templates
       let path = errorPath[0]
       switch (path) {
         case 'themes':
@@ -217,11 +188,8 @@ export default {
         case 'wp-includes':
           this.wp.themePlug = 'Theme or Plugin'
           break
-        default:
-          this.wp.themePlug = 'WordPress Application Error'
       }
       this.wordpress = true
-      this.errorName = errorName.value.substring(0, 12) // grab parse of error value and set as desc
     },
     commonEvent (commonErrorType) {
       if (commonErrorType[0] === 'Forbidden') {
@@ -252,19 +220,8 @@ export default {
       }
       this.server = true
     },
-    networkEvent (networkErrorType) {
-      let networkErrorValue = networkErrorType[0]
-      switch (networkErrorValue) {
-        case 'ERR_CONNECTION_REFUSED':
-          this.networkErrors.connection = true
-          break
-        case 'ERR_NAME_NOT_RESOLVED':
-          this.networkErrors.dns = true
-          break
-      }
-      this.network = true
-    },
     unknownEvent () {
+      this.resetForm()
       this.unknown = true
     },
     instructionsNav () {
@@ -310,7 +267,7 @@ export default {
   }
   .chip {
     margin-left: 10%;
-    min-width: 180px;
+    min-width: 140px;
     overflow: hidden;
   }
   .td-chip {

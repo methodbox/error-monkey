@@ -116,6 +116,10 @@
                       <i class="material-icons">build</i>
                       {{databaseData.solutionFive}}
                     </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionFive}}
+                    </div>
                   </li>
                   <li>
                     <div v-if='serverErrors.tmp'>
@@ -125,6 +129,10 @@
                     <div v-if='serverErrors.database'>
                       <i class="material-icons">build</i>
                       {{databaseData.solutionSix}}
+                    </div>
+                    <div v-if='serverErrors.internal'>
+                      <i class="material-icons">build</i>
+                      {{internalData.solutionSix}}
                     </div>
                   </li>
                 </ul>
@@ -206,7 +214,9 @@ export default {
         solutionOne: 'If this is a PHP-based site (check for index.php), trying running a test script. You can download one from the Required Script column.',
         solutionTwo: 'If your test script also produces a 500 or ISE error, try disabling the .htaccess file. If the error still occurs, take this to a Tech Lead.',
         solutionThree: 'If your test script worked and this is not a WordPress site, the customer or their developer will need to address the issue on their own.',
-        solutionFour: 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
+        solutionFour: 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.',
+        solutionFive: '',
+        solutionSix: ''
       }
     }
   }

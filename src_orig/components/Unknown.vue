@@ -14,7 +14,7 @@
               <h4>This error is not currently recognized</h4>
             </td>
             <td>
-              <h5 id="error-email">Please submit this error via email to <a id="mail-error" href="mailto:cshaffer@godaddy.com"><i class="material-icons">mail_outline</i>cshaffer@godaddy.com</a></h5>
+              <h5 id="error-email">Please submit this error via email to <a id="mail-error" href="mailto:email@email.com"><i class="material-icons">mail_outline</i>email@email.com</a></h5>
               <ul>
                 <li>
                   <h6>Provide a description including:</h6>

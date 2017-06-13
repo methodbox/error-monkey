@@ -88,7 +88,7 @@ export default {
       nav: {
         instr: false
       },
-      wordpress: false,
+      wordpress: true,
       joomla: false,
       custom: false,
       wp: {

@@ -100,7 +100,6 @@ export default {
       },
       unknown: false,
       serverErr: false,
->>>>>>> master
       common: false,
       server: false,
       network: false,

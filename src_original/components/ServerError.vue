@@ -23,9 +23,6 @@
                 <div v-if='serverErrors.internal'>
                   {{internalData.errorType}}
                 </div>
-                <div v-if='serverErrors.internal'>
-                  {{phpLimitsData.errorType}}
-                </div>
               </div>
             </td>
             <td>
@@ -37,9 +34,6 @@
               </div>
               <div v-if='serverErrors.internal'>
                 {{internalData.description}}
-              </div>
-              <div v-if='serverErrors.internal'>
-                {{phpLimitsData.description}}
               </div>
             </td>
             <td></td>
@@ -70,9 +64,6 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool'>Common Config</a>
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionOne}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='serverErrors.tmp'>
@@ -86,9 +77,6 @@
                     <div v-if='serverErrors.internal'>
                       <i class="material-icons">build</i>
                       {{internalData.solutionTwo}}
-                    </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionTwo}}
                     </div>
                   </li>
                   <li>
@@ -104,9 +92,6 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionThree}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionThree}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='serverErrors.tmp'>
@@ -121,9 +106,6 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionFour}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionFour}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='serverErrors.tmp'>
@@ -134,9 +116,6 @@
                       <i class="material-icons">build</i>
                       {{databaseData.solutionFive}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionFive}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='serverErrors.tmp'>
@@ -146,9 +125,6 @@
                     <div v-if='serverErrors.database'>
                       <i class="material-icons">build</i>
                       {{databaseData.solutionSix}}
-                    </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionSix}}
                     </div>
                   </li>
                 </ul>
@@ -167,10 +143,6 @@
                 <div v-if='serverErrors.internal'>
                   <a v-bind:href='internalData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='internalData.scriptLink' id='download-script'>Required Script</a>
-                </div>
-                <div v-if='serverErrors.internal'>
-                  <a v-bind:href='phpLimitsData.link'><i class='material-icons'>get_app</i></a>
-                  <a v-bind:href='phpLimitsData.scriptLink' id='download-script'>Required Script</a>
                 </div>
               </p>
             </td>
@@ -235,19 +207,6 @@ export default {
         solutionTwo: 'If your test script also produces a 500 or ISE error, try disabling the .htaccess file. If the error still occurs, take this to a Tech Lead.',
         solutionThree: 'If your test script worked and this is not a WordPress site, the customer or their developer will need to address the issue on their own.',
         solutionFour: 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
-      },
-      phpLimitsData: {
-        errorType: 'PHP Configuration Issue',
-        description: '',
-        scriptLink: '',
-        helpLinkBool: '',
-        helpLink: '',
-        solutionOne: '',
-        solutionTwo: '',
-        solutionThree: '',
-        solutionFour: '',
-        solutionFive: '',
-        solutionSix: ''
       }
     }
   }

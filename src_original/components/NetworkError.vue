@@ -20,9 +20,6 @@
                 <div v-if='networkErrors.dns'>
                   {{dnsData.errorType}}
                 </div>
-                <div v-if='networkErrors.ssl'>
-                  {{sslData.errorType}}
-                </div>
               </div>
             </td>
             <td>
@@ -31,9 +28,6 @@
               </div>
               <div v-if='networkErrors.dns'>
                 {{dnsData.description}}
-              </div>
-              <div v-if='networkErrors.ssl'>
-                {{sslData.description}}
               </div>
             </td>
             <td></td>
@@ -60,10 +54,6 @@
                       <i class="material-icons">build</i>
                       {{dnsData.solutionOne}} <a v-bind:href='dnsData.helpLink' v-if='dnsData.helpLinkBool'>Common Config</a>
                     </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionOne}} <a v-bind:href='sslData.helpLink' v-if='sslData.helpLinkBool'>Common Config</a>
-                    </div>
                   </li>
                   <li>
                     <div v-if='networkErrors.connection'>
@@ -73,10 +63,6 @@
                     <div v-if='networkErrors.dns'>
                       <i class="material-icons">build</i>
                       {{dnsData.solutionTwo}}
-                    </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionTwo}}
                     </div>
                   </li>
                   <li>
@@ -88,10 +74,6 @@
                       <i class="material-icons">build</i>
                       {{dnsData.solutionThree}}
                     </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionThree}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='networkErrors.connection'>
@@ -101,10 +83,6 @@
                     <div v-if='networkErrors.dns'>
                       <i class="material-icons">build</i>
                       {{dnsData.solutionFour}}
-                    </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionFour}}
                     </div>
                   </li>
                   <li>
@@ -116,10 +94,6 @@
                       <i class="material-icons">build</i>
                       {{dnsData.solutionFive}}
                     </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionFive}}
-                    </div>
                   </li>
                   <li>
                     <div v-if='networkErrors.connection'>
@@ -129,10 +103,6 @@
                     <div v-if='networkErrors.dns'>
                       <i class="material-icons">build</i>
                       {{dnsData.solutionSix}}
-                    </div>
-                    <div v-if='networkErrors.ssl'>
-                      <i class="material-icons">build</i>
-                      {{sslData.solutionSix}}
                     </div>
                   </li>
                 </ul>
@@ -147,10 +117,6 @@
                 <div v-if='networkErrors.dns'>
                   <a v-bind:href='dnsData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='dnsData.scriptLink' id='download-script'>Required Script</a>
-                </div>
-                <div v-if='networkErrors.ssl'>
-                  <a v-bind:href='sslData.link'><i class='material-icons'>get_app</i></a>
-                  <a v-bind:href='sslData.scriptLink' id='download-script'>Required Script</a>
                 </div>
               </p>
             </td>
@@ -187,7 +153,7 @@ export default {
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',
-        solutionOne: 'Sorry, this is a work in progress!',
+        solutionOne: '',
         solutionTwo: '',
         solutionThree: '',
         solutionFour: '',
@@ -200,20 +166,7 @@ export default {
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',
-        solutionOne: 'Sorry, this is a work in progress!',
-        solutionTwo: '',
-        solutionThree: '',
-        solutionFour: '',
-        solutionFive: '',
-        solutionSix: ''
-      },
-      sslData: {
-        errorType: 'SSL Configuration',
-        description: 'SSL is not installed or improperly configured.',
-        scriptLink: '',
-        helpLinkBool: '',
-        helpLink: '',
-        solutionOne: 'Sorry, this is a work in progress!',
+        solutionOne: '',
         solutionTwo: '',
         solutionThree: '',
         solutionFour: '',

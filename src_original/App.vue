@@ -29,7 +29,7 @@
           <div class="col s5 offset-s3">
             <div class="input-field full-width">
               <input type="text" name="Test Field" id="error-field" v-on:click="searchReset">
-              <label for="error-field">Enter the Error</label>
+              <label for="error-field">Enter the Error (cut and paste directly from the web page)</label>
             </div>
           </div>
           <div class="col s2 button-spacing">
@@ -41,7 +41,7 @@
       </form>
       <div class="row" v-if='wordpress'>
         <div class="col s12">
-          <wordpress v-bind:wp="wp"></wordpress>
+          <wordpress v-bind:wp="wp, errorName"></wordpress>
         </div>
       </div>
       <div class="row" v-if='common'>
@@ -90,19 +90,14 @@ export default {
       nav: {
         instr: false //  conditional for displaying Instructions on-click
       },
+      errorName: '', //  A short description of the error - WP & Server error templates are passed this value
       wordpress: false, //  booleans to determine which template is rendered
       common: false,
       server: false,
       network: false,
       unknown: false, //  unrecognized errors template
       wp: { //  WP errors template props
-        errorName: '', //  A short description of the error - WP & Server error templates are passed this value
-        themePlug: '',
-        wpPhpLimits: {
-          memory: false,
-          execTime: false,
-          inputTime: false
-        }
+        themePlug: ''
       },
       commonErrors: { //  common errors template props
         notFound: false,
@@ -112,22 +107,17 @@ export default {
         tmp: false,
         internal: false,
         database: false,
-        phpLimits: false,
         unknown: false
       },
       networkErrors: {
         connection: false,
-        dns: false,
-        ssl: false
+        dns: false
       }
     }
   },
   methods: {
     resetForm () {
       this.wordpress = false
-      this.wp.wpPhpLimits.memory = false
-      this.wp.wpPhpLimits.execTime = false
-      this.wp.wpPhpLimits.inputTime = false
       this.common = false
       this.commonErrors.notFound = false
       this.commonErrors.forbidden = false
@@ -135,12 +125,10 @@ export default {
       this.serverErrors.tmp = false
       this.serverErrors.internal = false
       this.serverErrors.database = false
-      this.serverErrors.phpLimits = false
       this.serverErrors.unknown = false
       this.network = false
       this.networkErrors.connection = false
       this.networkErrors.dns = false
-      this.networkErrors.ssl = false
     },
     searchReset () {
       document.getElementById('error-field').value = ''
@@ -184,10 +172,6 @@ export default {
             return err
           case '500':
             return err
-          case 'memory':
-            return err
-          case 'exhausted':
-            return err
         }
       })
       const networkFilter = parseError.filter((err) => {
@@ -196,39 +180,29 @@ export default {
             return err
           case 'ERR_NAME_NOT_RESOLVED':
             return err
-          case 'ERR_CERT_COMMON_NAME_INVALID':
-            return err
-          case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
-            return err
         }
       })
       if (wpFilter.length !== 0) { //  check if the err array has a value
-        if (serverFilter.length !== 0) {
-          this.wpEvent(serverFilter, errorText) // fire a sub event to handle rendering the proper template
-        } else {
-          this.wpEvent(wpFilter, errorText)
-        }
+        this.wpEvaluate(wpFilter, errorText) // fire a sub event to handle rendering the proper template
       }
       if (commonFilter.length !== 0) {
         if (commonFilter[0] !== 'wp()') {
           this.commonEvent(commonFilter)
         } else if (commonFilter[0] === 'wp()') {
-          this.wpEvent(commonFilter, errorText.value)
+          this.wpEvaluate(commonFilter, errorText)
         }
       }
       if (serverFilter.length !== 0) {
-        if (wpFilter.length === 0) {
-          this.serverEvent(serverFilter)
-        }
+        this.serverEvent(serverFilter)
       }
       if (networkFilter.length !== 0) {
         this.networkEvent(networkFilter)
       }
-      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && networkFilter.length === 0) {
+      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && networkFilter === 0) {
         this.unknownEvent()
       }
     }, // end errorFormSubmit()
-    wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
+    wpEvaluate (errorPath, errorName) { //  conditional rendering methods for templates
       let path = errorPath[0]
       switch (path) {
         case 'themes':
@@ -243,15 +217,11 @@ export default {
         case 'wp-includes':
           this.wp.themePlug = 'Theme or Plugin'
           break
-        case 'memory':
-          this.wp.wpPhpLimits.memory = true
-          this.wp.themePlug = 'WordPress Application Exceeded PHP Memory Limit'
-          break
         default:
           this.wp.themePlug = 'WordPress Application Error'
       }
       this.wordpress = true
-      this.wp.errorName = errorName.value.substring(0, 12) // grab parse of error value and set as desc
+      this.errorName = errorName.value.substring(0, 12) // grab parse of error value and set as desc
     },
     commonEvent (commonErrorType) {
       if (commonErrorType[0] === 'Forbidden') {
@@ -279,9 +249,6 @@ export default {
         case '500':
           this.serverErrors.internal = true
           break
-        case serverErrorType[0] + ' ' + serverErrorType[1] === 'memory exhausted':
-          this.serverErrors.phpLimits = true
-          break
       }
       this.server = true
     },
@@ -293,12 +260,6 @@ export default {
           break
         case 'ERR_NAME_NOT_RESOLVED':
           this.networkErrors.dns = true
-          break
-        case 'ERR_CERT_COMMON_NAME_INVALID':
-          this.networkErrors.ssl = true
-          break
-        case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
-          this.networkErrors.ssl = true
           break
       }
       this.network = true

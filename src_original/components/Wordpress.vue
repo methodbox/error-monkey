@@ -14,7 +14,7 @@
             <td>
               <div class="chip">
                 <span class="chip-label red accent-3">E</span>
-                {{wp.errorName}}
+                {{errorName}}
               </div>
             </td>
             <td>This error is always caused by a problem with the application.</td>
@@ -28,15 +28,6 @@
             </td>
             <td>{{wp.themePlug}}</td>
           </tr>
-          <tr v-if='wp.wpPhpLimits.memory'>
-            <td>
-              <div class="chip">
-                <span class="chip-label yellow accent-3">C</span>
-                PHP Memory Limit
-              </div>
-            </td>
-            <td>The application requires a higher limit of PHP Memory.</td>
-          </tr>
           <tr>
             <td>
               <div class="chip">
@@ -46,27 +37,6 @@
             </td>
             <td class="row">
               <div class="col s12 table-data-row">
-                <ul v-if='wp.wpPhpLimits.memory' id="wp-memory" >
-                  <li>
-                    <h4>Troubleshooting</h4>
-                  </li>
-                  <li>
-                    <i class="material-icons">build</i>
-                    Check for php.ini, php5.ini, or .user.ini files in the site's directory or hosting root directory.
-                  </li>
-                  <li>
-                    <i class="material-icons">build</i>
-                    Advise the customer they can make this change using the applicable "ini" file, or that this may be the cause.
-                  </li>
-                  <li>
-                    <i class="material-icons">build</i>
-                    If they already have an "ini" file, run a php info script to be sure it's taking effect.
-                  </li>
-                  <li>
-                    <i class="material-icons">build</i>
-                    If the limit listed in their file is displayed in php info, continue to Offer Services.
-                  </li>
-                </ul>
                 <ul>
                   <li>
                     <h4>Offer Services</h4>
@@ -116,7 +86,7 @@
 
 <script>
   export default {
-    props: ['wp']
+    props: ['wp', 'errorName']
     //  import our WP props from the main App.vue
   }
 </script>
@@ -127,8 +97,5 @@
   }
   .more-serious {
     color: red;
-  }
-  #wp-memory {
-    margin-bottom: 30px;
   }
 </style>

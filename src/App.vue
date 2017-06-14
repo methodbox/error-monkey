@@ -90,7 +90,19 @@ export default {
       nav: {
         instr: false //  conditional for displaying Instructions on-click
       },
+<<<<<<< HEAD
       wordpress: false, //  booleans to determine which template is rendered
+=======
+      wordpress: true,
+      joomla: false,
+      custom: false,
+      wp: {
+        wpErrorName: '',
+        themePlug: ''
+      },
+      unknown: false,
+      serverErr: false,
+>>>>>>> master
       common: false,
       server: false,
       network: false,

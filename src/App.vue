@@ -91,15 +91,8 @@ export default {
         instr: false //  conditional for displaying Instructions on-click
       },
       wordpress: false, //  booleans to determine which template is rendered
-      wordpress: true,
       joomla: false,
       custom: false,
-      wp: {
-        wpErrorName: '',
-        themePlug: ''
-      },
-      unknown: false,
-      serverErr: false,
       common: false,
       server: false,
       network: false,
@@ -150,6 +143,7 @@ export default {
       this.networkErrors.connection = false
       this.networkErrors.dns = false
       this.networkErrors.ssl = false
+      this.unknown = false
     },
     searchReset () {
       document.getElementById('error-field').value = ''

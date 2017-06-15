@@ -72,7 +72,7 @@
                     </div>
                     <div v-if='networkErrors.dns'>
                       <i class="material-icons">build</i>
-                      {{dnsData.solutionTwo}}
+                      {{dnsData.solutionTwo}}  <a v-bind:href='dnsData.helpLink' target='_blank'>FetchDNS</a>
                     </div>
                     <div v-if='networkErrors.ssl'>
                       <i class="material-icons">build</i>
@@ -144,10 +144,6 @@
                   <a v-bind:href='connectionData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='connectionData.scriptLink' id='download-script'>Required Script</a>
                 </div>
-                <div v-if='networkErrors.dns'>
-                  <a v-bind:href='dnsData.link'><i class='material-icons'>get_app</i></a>
-                  <a v-bind:href='dnsData.scriptLink' id='download-script'>Required Script</a>
-                </div>
                 <div v-if='networkErrors.ssl'>
                   <a v-bind:href='sslData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='sslData.scriptLink' id='download-script'>Required Script</a>
@@ -187,7 +183,7 @@ export default {
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',
-        solutionOne: 'Sorry, this is a work in progress!',
+        solutionOne: '',
         solutionTwo: '',
         solutionThree: '',
         solutionFour: '',
@@ -199,9 +195,9 @@ export default {
         description: 'DNS is improperly configured or cannot be resolved.',
         scriptLink: '',
         helpLinkBool: '',
-        helpLink: '',
-        solutionOne: 'Sorry, this is a work in progress!',
-        solutionTwo: '',
+        helpLink: 'http://dns.beardof.red',
+        solutionOne: 'First, check that the domain in the address bar did not redirect before giving the error (exa. google.com -> WWW.google.com)',
+        solutionTwo: 'Check the DNS using a remote DNS tool: ',
         solutionThree: '',
         solutionFour: '',
         solutionFive: '',

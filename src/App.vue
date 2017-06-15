@@ -216,7 +216,7 @@ export default {
         if (commonFilter[0] !== 'wp()') {
           this.commonEvent(commonFilter)
         } else if (commonFilter[0] === 'wp()') {
-          this.wpEvent(commonFilter, errorText.value)
+          this.wpEvent(commonFilter, errorText)
         }
       }
       if (serverFilter.length !== 0) {

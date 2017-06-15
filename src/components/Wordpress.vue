@@ -1,4 +1,4 @@
-<template>
+  <template>
   <!--  WordPress Error Template  -->
   <div class="row">
     <div class="col s10 offset-s1">
@@ -7,6 +7,7 @@
           <tr>
             <th>Error</th>
             <th>Description</th>
+            <th v-if='wp.wpPhpLimits.memory'>Required Script</th>
           </tr>
         </thead>
         <tbody>
@@ -18,6 +19,7 @@
               </div>
             </td>
             <td>This error is always caused by a problem with the application.</td>
+            <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
           <tr>
             <td>
@@ -27,6 +29,7 @@
               </div>
             </td>
             <td>{{wp.themePlug}}</td>
+            <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
           <tr v-if='wp.wpPhpLimits.memory'>
             <td>
@@ -36,6 +39,7 @@
               </div>
             </td>
             <td>The application requires a higher limit of PHP Memory.</td>
+            <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
           <tr>
             <td>
@@ -83,6 +87,14 @@
                 </ul>
               </div>
             </td>
+            <td v-if='wp.wpPhpLimits.memory'>
+              <p>
+                <div>
+                  <a href='https://confluence.godaddy.com/download/attachments/20748053/phpinfo.php?version=2&modificationDate=1493746207000&api=v2&download=true'><i class='material-icons'>get_app</i></a>
+                  <a href='https://confluence.godaddy.com/download/attachments/20748053/phpinfo.php?version=2&modificationDate=1493746207000&api=v2&download=true' id='download-script'>Required Script</a>
+                </div>
+              </p>
+            </td>
           </tr>
           <tr>
             <td></td>
@@ -107,6 +119,7 @@
                 </td>
               </div>
             </div>
+            <td wp.wpPhpLimits.memory></td>
           </tr>
         </tbody>
       </table>

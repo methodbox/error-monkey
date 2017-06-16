@@ -7,8 +7,9 @@
           <div class="nav-wrapper">
             <a href="/test" class="brand-logo">Error Monkey</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions</a></li>
-              <li><a class="nav-links" v-on:click="unknownEvent">Report a Bug</a></li>
+              <li v-if='nav.instr'><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions(Hide)</a></li>
+              <li v-else><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions(Show)</a></li>
+              <li><a class="nav-links" v-on:click="bugReport">Report a Bug</a></li>
             </ul>
           </div>
         </nav>
@@ -88,7 +89,7 @@ export default {
   data () {
     return {
       nav: {
-        instr: false //  conditional for displaying Instructions on-click
+        instr: true //  conditional for displaying Instructions on-click
       },
       wordpress: false, //  booleans to determine which template is rendered
       joomla: false,
@@ -115,6 +116,11 @@ export default {
         internal: false,
         database: false,
         phpLimits: false,
+        phpLimit: {
+          memory: false,
+          execTime: false,
+          inputTime: false
+        },
         unknown: false
       },
       networkErrors: {
@@ -282,8 +288,9 @@ export default {
         case '500':
           this.serverErrors.internal = true
           break
-        case serverErrorType[0] + ' ' + serverErrorType[1] === 'memory exhausted':
+        case 'memory':
           this.serverErrors.phpLimits = true
+          this.serverErrors.phpLimit.memory = true
           break
       }
       this.server = true
@@ -314,6 +321,13 @@ export default {
         this.nav.instr = true
       } else {
         this.nav.instr = false
+      }
+    },
+    bugReport () {
+      if (this.unknown === false) {
+        this.unknown = true
+      } else {
+        this.unknown = false
       }
     }
   }

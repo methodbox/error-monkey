@@ -183,7 +183,7 @@ export default {
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',
-        solutionOne: '',
+        solutionOne: 'This page is a work in progress!',
         solutionTwo: '',
         solutionThree: '',
         solutionFour: '',

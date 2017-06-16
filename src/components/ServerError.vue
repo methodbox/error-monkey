@@ -23,8 +23,14 @@
                 <div v-if='serverErrors.internal'>
                   {{internalData.errorType}}
                 </div>
-                <div v-if='serverErrors.internal'>
-                  {{phpLimitsData.errorType}}
+                <div v-if='serverErrors.phpLimit.memory'>
+                  {{phpLimitsData.memory.errorType}}
+                </div>
+                <div v-if='serverErrors.phpLimit.execTime'>
+                  {{phpLimitsData.execTime.errorType}}
+                </div>
+                <div v-if='serverErrors.phpLimit.inputTime'>
+                  {{phpLimitsData.inputTime.errorType}}
                 </div>
               </div>
             </td>
@@ -38,8 +44,8 @@
               <div v-if='serverErrors.internal'>
                 {{internalData.description}}
               </div>
-              <div v-if='serverErrors.internal'>
-                {{phpLimitsData.description}}
+              <div v-if='serverErrors.phpLimit.memory'>
+                {{phpLimitsData.memory.description}}
               </div>
             </td>
             <td></td>
@@ -237,17 +243,45 @@ export default {
         solutionFour: 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
       },
       phpLimitsData: {
-        errorType: 'PHP Configuration Issue',
-        description: '',
-        scriptLink: '',
-        helpLinkBool: '',
-        helpLink: '',
-        solutionOne: '',
-        solutionTwo: '',
-        solutionThree: '',
-        solutionFour: '',
-        solutionFive: '',
-        solutionSix: ''
+        memory: {
+          errorType: 'PHP Memory Limit Error',
+          description: 'This page is a work in progress!',
+          scriptLink: '',
+          helpLinkBool: '',
+          helpLink: '',
+          solutionOne: '',
+          solutionTwo: '',
+          solutionThree: '',
+          solutionFour: '',
+          solutionFive: '',
+          solutionSix: ''
+        },
+        execTime: {
+          errorType: 'PHP Execution Time Error',
+          description: '',
+          scriptLink: '',
+          helpLinkBool: '',
+          helpLink: '',
+          solutionOne: '',
+          solutionTwo: '',
+          solutionThree: '',
+          solutionFour: '',
+          solutionFive: '',
+          solutionSix: ''
+        },
+        inputTime: {
+          errorType: 'PHP Input Time Error',
+          description: '',
+          scriptLink: '',
+          helpLinkBool: '',
+          helpLink: '',
+          solutionOne: '',
+          solutionTwo: '',
+          solutionThree: '',
+          solutionFour: '',
+          solutionFive: '',
+          solutionSix: ''
+        }
       }
     }
   }

@@ -199,18 +199,9 @@ export default {
             return err
         }
       })
-      const networkFilter = parseError.filter((err) => {
-        switch (err) {
-          case 'ERR_CONNECTION_REFUSED':
-            return err
-          case 'ERR_NAME_NOT_RESOLVED':
-            return err
-          case 'ERR_CERT_COMMON_NAME_INVALID':
-            return err
-          case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
-            return err
-        }
-      })
+      this.networkFilter(parseError)
+      console.log(this.networkFilter)
+      console.log(this.networkFilter.length)
       if (wpFilter.length !== 0) { //  check if the err array has a value
         if (serverFilter.length !== 0) {
           this.wpEvent(serverFilter, errorText) // fire a sub event to handle rendering the proper template
@@ -230,13 +221,32 @@ export default {
           this.serverEvent(serverFilter)
         }
       }
-      if (networkFilter.length !== 0) {
-        this.networkEvent(networkFilter)
-      }
-      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && networkFilter.length === 0) {
+      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && this.networkFilter.length === 0) {
         this.unknownEvent()
       }
-    }, // end errorFormSubmit()
+    },
+    networkFilter (error) {
+      console.log('networkFilter')
+      console.log(error)
+      const networkErr = error.filter((err) => {
+        console.log('switch')
+        console.log(err)
+        switch (err) {
+          case 'ERR_CONNECTION_REFUSED':
+            return err
+          case 'ERR_NAME_NOT_RESOLVED':
+            return err
+          case 'ERR_CERT_COMMON_NAME_INVALID':
+            return err
+          case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
+            return err
+        }
+      })
+      if (networkErr.length !== 0) {
+        this.networkEvent(networkErr)
+      }
+      return networkErr
+    },
     wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
       let path = errorPath[0]
       switch (path) {
@@ -316,14 +326,14 @@ export default {
     unknownEvent () {
       this.unknown = true
     },
-    instructionsNav () {//  conditionally show Instructions template
+    instructionsNav () { //  conditionally show Instructions template
       if (this.nav.instr === false) {
         this.nav.instr = true
       } else {
         this.nav.instr = false
       }
     },
-    bugReport () {//  conditionally show how to report a bug
+    bugReport () { //  conditionally show how to report a bug
       if (this.unknown === false) {
         this.unknown = true
       } else {

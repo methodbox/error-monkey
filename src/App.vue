@@ -316,14 +316,14 @@ export default {
     unknownEvent () {
       this.unknown = true
     },
-    instructionsNav () {
+    instructionsNav () {//  conditionally show Instructions template
       if (this.nav.instr === false) {
         this.nav.instr = true
       } else {
         this.nav.instr = false
       }
     },
-    bugReport () {
+    bugReport () {//  conditionally show how to report a bug
       if (this.unknown === false) {
         this.unknown = true
       } else {

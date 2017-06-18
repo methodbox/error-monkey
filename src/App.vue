@@ -159,7 +159,39 @@ export default {
       let errorText = document.getElementById('error-field')
       let parseError = errorText.value.split(' ') // parse the error
       let wpParseError = errorText.value.split('/') // parse the path in the error - looking for WP values
-      const wpFilter = wpParseError.filter((err) => { //  filter to determine the error type
+      //  filter out values using methods and store them in a variable
+      let wpArray = this.wpFilter(wpParseError, errorText)
+      let networkArray = this.networkFilter(parseError)
+      let commonArray = this.commonFilter(parseError, errorText)
+      let serverArray = this.serverFilter(parseError)
+      if (wpArray.length !== 0) { //  check if the err array has a value
+        if (serverArray.length !== 0) {
+          this.wpEvent(serverArray, errorText) // fire a sub event to handle rendering the proper template
+        } else {
+          this.wpEvent(wpArray, errorText)
+        }
+      }
+      if (commonArray.length !== 0) {
+        if (commonArray[0] !== 'wp()') {
+          this.commonEvent(commonArray)
+        } else if (commonArray[0] === 'wp()') {
+          this.wpEvent(commonArray, errorText)
+        }
+      }
+      if (networkArray.length !== 0) {
+        this.networkEvent(networkArray)
+      }
+      if (serverArray.length !== 0) {
+        if (wpArray.length === 0) {
+          this.serverEvent(serverArray)
+        }
+      }
+      if (wpArray.length === 0 && commonArray.length === 0 && serverArray.length === 0 && networkArray.length === 0) {
+        this.unknownEvent()
+      }
+    },
+    wpFilter (error, wpText) {
+      const wpErr = error.filter((err) => {
         switch (err) {
           case 'themes':
             return err
@@ -169,7 +201,11 @@ export default {
             return err
         }
       })
-      const commonFilter = parseError.filter((err) => {
+      console.log('wpErr: ', wpErr, wpErr.length)
+      return wpErr
+    },
+    commonFilter (error, commonText) {
+      const commonErr = error.filter((err) => {
         switch (err) {
           case 'Forbidden':
             return err
@@ -181,7 +217,27 @@ export default {
             return err
         }
       })
-      const serverFilter = parseError.filter((err) => {
+      console.log('commonErr: ', commonErr.length)
+      return commonErr
+    },
+    networkFilter (error) {
+      const networkErr = error.filter((err) => {
+        switch (err) {
+          case 'ERR_CONNECTION_REFUSED':
+            return err
+          case 'ERR_NAME_NOT_RESOLVED':
+            return err
+          case 'ERR_CERT_COMMON_NAME_INVALID':
+            return err
+          case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
+            return err
+        }
+      })
+      console.log('networkErr: ', networkErr.length)
+      return networkErr
+    },
+    serverFilter (error) {
+      const serverErr = error.filter((err) => {
         switch (err) {
           case 'session_start():':
             return err
@@ -199,53 +255,8 @@ export default {
             return err
         }
       })
-      this.networkFilter(parseError)
-      console.log(this.networkFilter)
-      console.log(this.networkFilter.length)
-      if (wpFilter.length !== 0) { //  check if the err array has a value
-        if (serverFilter.length !== 0) {
-          this.wpEvent(serverFilter, errorText) // fire a sub event to handle rendering the proper template
-        } else {
-          this.wpEvent(wpFilter, errorText)
-        }
-      }
-      if (commonFilter.length !== 0) {
-        if (commonFilter[0] !== 'wp()') {
-          this.commonEvent(commonFilter)
-        } else if (commonFilter[0] === 'wp()') {
-          this.wpEvent(commonFilter, errorText)
-        }
-      }
-      if (serverFilter.length !== 0) {
-        if (wpFilter.length === 0) {
-          this.serverEvent(serverFilter)
-        }
-      }
-      if (wpFilter.length === 0 && commonFilter.length === 0 && serverFilter.length === 0 && this.networkFilter.length === 0) {
-        this.unknownEvent()
-      }
-    },
-    networkFilter (error) {
-      console.log('networkFilter')
-      console.log(error)
-      const networkErr = error.filter((err) => {
-        console.log('switch')
-        console.log(err)
-        switch (err) {
-          case 'ERR_CONNECTION_REFUSED':
-            return err
-          case 'ERR_NAME_NOT_RESOLVED':
-            return err
-          case 'ERR_CERT_COMMON_NAME_INVALID':
-            return err
-          case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
-            return err
-        }
-      })
-      if (networkErr.length !== 0) {
-        this.networkEvent(networkErr)
-      }
-      return networkErr
+      console.log('serverErr: ', serverErr, serverErr.length)
+      return serverErr
     },
     wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
       let path = errorPath[0]
@@ -281,6 +292,7 @@ export default {
       this.common = true
     },
     serverEvent (serverErrorType) {
+      console.log('serverEvent: ' + serverErrorType)
       let serverErrorValue = serverErrorType[0]
       switch (serverErrorValue) {
         case 'session_start():':

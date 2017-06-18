@@ -201,7 +201,6 @@ export default {
             return err
         }
       })
-      console.log('wpErr: ', wpErr, wpErr.length)
       return wpErr
     },
     commonFilter (error, commonText) {
@@ -217,7 +216,6 @@ export default {
             return err
         }
       })
-      console.log('commonErr: ', commonErr.length)
       return commonErr
     },
     networkFilter (error) {
@@ -233,7 +231,6 @@ export default {
             return err
         }
       })
-      console.log('networkErr: ', networkErr.length)
       return networkErr
     },
     serverFilter (error) {
@@ -255,7 +252,6 @@ export default {
             return err
         }
       })
-      console.log('serverErr: ', serverErr, serverErr.length)
       return serverErr
     },
     wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
@@ -292,7 +288,6 @@ export default {
       this.common = true
     },
     serverEvent (serverErrorType) {
-      console.log('serverEvent: ' + serverErrorType)
       let serverErrorValue = serverErrorType[0]
       switch (serverErrorValue) {
         case 'session_start():':

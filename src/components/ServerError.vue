@@ -174,7 +174,7 @@
                   <a v-bind:href='internalData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='internalData.scriptLink' id='download-script'>Required Script</a>
                 </div>
-                <div v-if='serverErrors.internal'>
+                <div v-if='serverErrors.phpLimits'>
                   <a v-bind:href='phpLimitsData.link'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='phpLimitsData.scriptLink' id='download-script'>Required Script</a>
                 </div>

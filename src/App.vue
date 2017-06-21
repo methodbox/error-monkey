@@ -1,6 +1,7 @@
 <template>
   <div>
     <app-header v-bind:nav='nav' v-on:bugEmit="bugReport"></app-header>
+    <span id='version'>v1.3.2</span>
     <div id="app">
       <div class="row">
         <div class="col s4 offset-s4">
@@ -12,6 +13,11 @@
         </div>
       </div>
       <error-form v-on:errorPreventEmit='errorFormSubmit' v-on:errorSubEmit='errorFormSubmit' v-on:searchResEmit='searchReset'></error-form>
+      <div class="row" v-if='unknown'>
+        <div class="col s12">
+          <unknown></unknown>
+        </div>
+      </div>
       <div class="row" v-if='wordpress'>
         <div class="col s12">
           <wordpress v-bind:wp="wp"></wordpress>
@@ -25,11 +31,6 @@
       <div class="row" v-if='server'>
         <div class="col s12">
           <server-error v-bind:serverErrors='serverErrors'></server-error>
-        </div>
-      </div>
-      <div class="row" v-if='unknown'>
-        <div class="col s12">
-          <unknown></unknown>
         </div>
       </div>
       <div class="row" v-if='network'>
@@ -417,5 +418,11 @@ export default {
   }
   #nav-mobile {
     padding-right: 50px;
+  }
+  #version {
+    color: rgba(48,79,254, .8);
+    font-weight: lighter;
+    padding: 10px;
+    line-height: 1.75;
   }
 </style>

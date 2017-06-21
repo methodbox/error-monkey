@@ -23,7 +23,7 @@ export default {
 <style lang="css">
   .read-carefully {
     font-style: italic;
-    color: deeppink;
+    color: #ff4081;
   }
   .read-carefully > span {
     font-weight: bold;

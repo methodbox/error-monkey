@@ -65,5 +65,6 @@ export default {
   }
   #mail-error {
     text-decoration: none;
+    color: #ff4081;
   }
 </style>

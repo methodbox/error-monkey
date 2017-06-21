@@ -121,11 +121,15 @@ export default {
       this.serverErrors.internal = false
       this.serverErrors.database = false
       this.serverErrors.phpLimits = false
+      this.serverErrors.phpLimit.memory = false
+      this.serverErrors.phpLimit.execTime = false
+      this.serverErrors.phpLimit.inputTime = false
       this.serverErrors.unknown = false
       this.network = false
       this.networkErrors.connection = false
       this.networkErrors.dns = false
       this.networkErrors.ssl = false
+      this.networkErrors.redirects = false
       this.unknown = false
     },
     searchReset () {

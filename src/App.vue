@@ -1,45 +1,17 @@
 <template>
   <div>
-    <header>
-      <!-- nav -->
-      <div class="navbar-fixed">
-        <nav class="nav-color">
-          <div class="nav-wrapper">
-            <a href="/test" class="brand-logo">Error Monkey</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li v-if='nav.instr'><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions(Hide)</a></li>
-              <li v-else><a class="nav-links" href="#" v-on:click="instructionsNav">Instructions(Show)</a></li>
-              <li><a class="nav-links" v-on:click="bugReport">Report a Bug</a></li>
-            </ul>
-          </div>
-        </nav>
-      </div>
-    </header>
+    <app-header v-bind:nav='nav' v-on:bugEmit="bugReport"></app-header>
     <div id="app">
       <div class="row">
         <div class="col s4 offset-s4">
           <img src="./assets/error-monkey-icon@0.25x.png">
           <h3>Error Monkey</h3>
         </div>
-        <div class="col s4">
-          <instructions v-if="nav.instr"></instructions>
+        <div class="col s4" v-if="nav.instr">
+          <instructions></instructions>
         </div>
       </div>
-      <form v-on:submit.prevent="errorFormSubmit" autocomplete="">
-        <div class="row" id='error-field-row'>
-          <div class="col s5 offset-s3">
-            <div class="input-field full-width">
-              <input type="text" name="Test Field" id="error-field" v-on:click="searchReset">
-              <label for="error-field">Enter the Error</label>
-            </div>
-          </div>
-          <div class="col s2 button-spacing">
-            <button class="waves-effect waves-light btn pink accent-2" id="submit-button" type="button" v-on:click="errorFormSubmit">
-              Fix Me
-            </button>
-          </div>
-        </div>
-      </form>
+      <error-form v-on:errorPreventEmit='errorFormSubmit' v-on:errorSubEmit='errorFormSubmit' v-on:searchResEmit='searchReset'></error-form>
       <div class="row" v-if='wordpress'>
         <div class="col s12">
           <wordpress v-bind:wp="wp"></wordpress>
@@ -70,6 +42,8 @@
 </template>
 
 <script>
+import AppHeader from './components/Header'
+import ErrorForm from './components/ErrorForm'
 import Wordpress from './components/Wordpress'
 import Unknown from './components/Unknown'
 import CommonError from './components/CommonError'
@@ -79,6 +53,8 @@ import Instructions from './components/Instructions'
 export default {
   name: 'app',
   components: {
+    AppHeader,
+    ErrorForm,
     Wordpress,
     CommonError,
     ServerError,
@@ -116,17 +92,18 @@ export default {
         internal: false,
         database: false,
         phpLimits: false,
-        phpLimit: {
+        phpLimit: { //  php limits-specific props
           memory: false,
           execTime: false,
           inputTime: false
         },
         unknown: false
       },
-      networkErrors: {
+      networkErrors: {//  network errors template props
         connection: false,
         dns: false,
-        ssl: false
+        ssl: false,
+        redirects: false
       }
     }
   },
@@ -225,9 +202,13 @@ export default {
             return err
           case 'ERR_NAME_NOT_RESOLVED':
             return err
+          case 'DNS_PROBE_FINISHED_NXDOMAIN':
+            return err
           case 'ERR_CERT_COMMON_NAME_INVALID':
             return err
           case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
+            return err
+          case 'ERR_TOO_MANY_REDIRECTS':
             return err
         }
       })
@@ -321,24 +302,23 @@ export default {
         case 'ERR_NAME_NOT_RESOLVED':
           this.networkErrors.dns = true
           break
+        case 'DNS_PROBE_FINISHED_NXDOMAIN':
+          this.networkErrors.dns = true
+          break
         case 'ERR_CERT_COMMON_NAME_INVALID':
           this.networkErrors.ssl = true
           break
         case 'ERR_SSL_VERSION_OR_CIPHER_MISMATCH':
           this.networkErrors.ssl = true
           break
+        case 'ERR_TOO_MANY_REDIRECTS':
+          this.networkErrors.redirects = true
+          break
       }
       this.network = true
     },
     unknownEvent () {
       this.unknown = true
-    },
-    instructionsNav () { //  conditionally show Instructions template
-      if (this.nav.instr === false) {
-        this.nav.instr = true
-      } else {
-        this.nav.instr = false
-      }
     },
     bugReport () { //  conditionally show how to report a bug
       if (this.unknown === false) {

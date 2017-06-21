@@ -23,6 +23,9 @@
                 <div v-if='networkErrors.ssl'>
                   {{sslData.errorType}}
                 </div>
+                <div v-if='networkErrors.redirects'>
+                  {{redirectData.errorType}}
+                </div>
               </div>
             </td>
             <td>
@@ -34,6 +37,9 @@
               </div>
               <div v-if='networkErrors.ssl'>
                 {{sslData.description}}
+              </div>
+              <div v-if='networkErrors.redirects'>
+                {{redirectData.description}}
               </div>
             </td>
             <td></td>
@@ -206,6 +212,19 @@ export default {
       sslData: {
         errorType: 'SSL Configuration',
         description: 'SSL is not installed or improperly configured.',
+        scriptLink: '',
+        helpLinkBool: '',
+        helpLink: '',
+        solutionOne: 'Sorry, this is a work in progress!',
+        solutionTwo: '',
+        solutionThree: '',
+        solutionFour: '',
+        solutionFive: '',
+        solutionSix: ''
+      },
+      redirectData: {
+        errorType: 'Too Many Redirects',
+        description: 'Caused by too many concurrent redirects, usually due to incorrect forward or hosting settings.',
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',

@@ -12,15 +12,15 @@
           <instructions></instructions>
         </div>
       </div>
-      <error-form v-on:errorPreventEmit='errorFormSubmit' v-on:errorSubEmit='errorFormSubmit' v-on:searchResEmit='searchReset'></error-form>
+      <error-field v-on:errorPreventEmit='errorFormSubmit' v-on:errorSubEmit='errorFormSubmit' v-on:searchResEmit='searchReset'></error-field>
       <div class="row" v-if='unknown'>
         <div class="col s12">
           <unknown></unknown>
         </div>
       </div>
-      <div class="row" v-if='wordpress'>
+      <div class="row" v-if='wordpress || syntax'>
         <div class="col s12">
-          <wordpress v-bind:wp="wp"></wordpress>
+          <app-error v-bind:wp="wp, wordpress"></app-error>
         </div>
       </div>
       <div class="row" v-if='common'>
@@ -44,8 +44,8 @@
 
 <script>
 import AppHeader from './components/Header'
-import ErrorForm from './components/ErrorForm'
-import Wordpress from './components/Wordpress'
+import ErrorField from './components/ErrorField'
+import AppError from './components/AppError'
 import Unknown from './components/Unknown'
 import CommonError from './components/CommonError'
 import ServerError from './components/ServerError'
@@ -55,8 +55,8 @@ export default {
   name: 'app',
   components: {
     AppHeader,
-    ErrorForm,
-    Wordpress,
+    ErrorField,
+    AppError,
     CommonError,
     ServerError,
     NetworkError,
@@ -84,6 +84,7 @@ export default {
           inputTime: false
         }
       },
+      syntax: false,
       commonErrors: { //  common errors template props
         notFound: false,
         forbidden: false
@@ -104,13 +105,15 @@ export default {
         connection: false,
         dns: false,
         ssl: false,
-        redirects: false
+        redirects: false,
+        timeout: false
       }
     }
   },
   methods: {
     resetForm () {
       this.wordpress = false
+      this.syntax = false
       this.wp.wpPhpLimits.memory = false
       this.wp.wpPhpLimits.execTime = false
       this.wp.wpPhpLimits.inputTime = false
@@ -215,6 +218,8 @@ export default {
             return err
           case 'ERR_TOO_MANY_REDIRECTS':
             return err
+          case 'ERR_CONNECTION_TIMED_OUT':
+            return err
         }
       })
       return networkErr
@@ -236,8 +241,15 @@ export default {
             return err
           case 'exhausted':
             return err
+          case '(using':
+            return err
+          case 'Parse':
+            return err
+          case 'syntax':
+            return err
         }
       })
+      console.log(serverErr)
       return serverErr
     },
     wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
@@ -295,6 +307,15 @@ export default {
           this.serverErrors.phpLimits = true
           this.serverErrors.phpLimit.memory = true
           break
+        case '(using':
+          this.serverErrors.database = true
+          break
+        case 'Parse':
+          this.syntax = true
+          break
+        case 'syntax':
+          this.syntax = true
+          break
       }
       this.server = true
     },
@@ -318,6 +339,9 @@ export default {
           break
         case 'ERR_TOO_MANY_REDIRECTS':
           this.networkErrors.redirects = true
+          break
+        case 'ERR_CONNECTION_TIMED_OUT':
+          this.networkErrors.timeout = true
           break
       }
       this.network = true

@@ -18,7 +18,7 @@
                 {{wp.errorName}}
               </div>
             </td>
-            <td>This error is always caused by a problem with the application.</td>
+            <td v-if='wordpress'>This error is always caused by a problem with the application.</td>
             <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
           <tr>
@@ -129,7 +129,7 @@
 
 <script>
   export default {
-    props: ['wp']
+    props: ['wp', 'wordpress', 'syntax']
     //  import our WP props from the main App.vue
   }
 </script>

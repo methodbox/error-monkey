@@ -23,6 +23,9 @@
                 <div v-if='serverErrors.internal'>
                   {{internalData.errorType}}
                 </div>
+                <div v-if='serverErrors.syntax'>
+                  {{syntaxData.errorType}}
+                </div>
                 <div v-if='serverErrors.phpLimit.memory'>
                   {{phpLimitsData.memory.errorType}}
                 </div>
@@ -43,6 +46,9 @@
               </div>
               <div v-if='serverErrors.internal'>
                 {{internalData.description}}
+              </div>
+              <div v-if='serverErrors.syntax'>
+                {{syntaxData.description}}
               </div>
               <div v-if='serverErrors.phpLimit.memory'>
                 {{phpLimitsData.memory.description}}
@@ -66,18 +72,23 @@
                   <li>
                     <div v-if='serverErrors.tmp'>
                       <i class="material-icons">build</i>
-                      {{tmpData.solutionOne}} <a v-bind:href='tmpData.helpLink' v-if='tmpData.helpLinkBool'>Common Config</a>
+                      {{tmpData.solutionOne}} <a v-bind:href='tmpData.helpLink' v-if='tmpData.helpLinkBool' target='_blank'>Common Config</a>
                     </div>
                     <div v-if='serverErrors.database'>
                       <i class="material-icons">build</i>
-                      {{databaseData.solutionOne}} <a v-bind:href='databaseData.helpLink' v-if='databaseData.helpLinkBool'>Common Config</a>
+                      {{databaseData.solutionOne}} <a v-bind:href='databaseData.helpLink' v-if='databaseData.helpLinkBool' target='_blank'>Common Config</a>
                     </div>
                     <div v-if='serverErrors.internal'>
+                      {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool' target='_blank'>Common Config</a>
                       <i class="material-icons">build</i>
-                      {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool'>Common Config</a>
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionOne}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionOne}} <span class='wpps'>{{syntaxData.wpps}}</span>
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionOne}}
                     </div>
                   </li>
                   <li>
@@ -93,8 +104,13 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionTwo}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionTwo}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionTwo}}
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionTwo}}
                     </div>
                   </li>
                   <li>
@@ -110,8 +126,13 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionThree}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionThree}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionThree}}
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionThree}}
                     </div>
                   </li>
                   <li>
@@ -127,8 +148,13 @@
                       <i class="material-icons">build</i>
                       {{internalData.solutionFour}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionFour}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionFour}}
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionFour}}
                     </div>
                   </li>
                   <li>
@@ -140,8 +166,13 @@
                       <i class="material-icons">build</i>
                       {{databaseData.solutionFive}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionFive}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionFive}}
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionFive}}
                     </div>
                   </li>
                   <li>
@@ -153,8 +184,13 @@
                       <i class="material-icons">build</i>
                       {{databaseData.solutionSix}}
                     </div>
-                    <div v-if='serverErrors.internal'>
-                      {{phpLimitsData.solutionSix}}
+                    <div v-if='serverErrors.syntax'>
+                      <i class="material-icons">build</i>
+                      {{syntaxData.solutionSix}}
+                    </div>
+                    <div v-if='serverErrors.phpLimit.memory'>
+                      <i class="material-icons">build</i>
+                      {{phpLimitsData.memory.solutionSix}}
                     </div>
                   </li>
                 </ul>
@@ -163,20 +199,29 @@
             <td id="script-column">
               <p>
                 <div v-if='serverErrors.tmp'>
-                  <a v-bind:href='tmpData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='tmpData.link' target='_blank'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='tmpData.scriptLink' id='download-script'>Required Script</a>
+                  <p class='script-warning grey-text'>(Must be logged into Confluence)</p>
                 </div>
                 <div v-if='serverErrors.database'>
-                  <a v-bind:href='databaseData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='databaseData.link' target='_blank'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='databaseData.scriptLink' id='download-script'>Required Script</a>
+                  <p class='script-warning grey-text'>(Must be logged into Confluence)</p>
                 </div>
                 <div v-if='serverErrors.internal'>
-                  <a v-bind:href='internalData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='internalData.link' target='_blank'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='internalData.scriptLink' id='download-script'>Required Script</a>
+                  <p class='script-warning grey-text'>(Must be logged into Confluence)</p>
+                </div>
+                <div v-if='serverErrors.syntax'>
+                  <a v-bind:href='syntaxData.link' target='_blank'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='syntaxData.scriptLink' id='download-script'>Required Script</a>
+                  <p class='script-warning grey-text'>(Must be logged into Confluence)</p>
                 </div>
                 <div v-if='serverErrors.phpLimits'>
-                  <a v-bind:href='phpLimitsData.link'><i class='material-icons'>get_app</i></a>
+                  <a v-bind:href='phpLimitsData.link' target='_blank'><i class='material-icons'>get_app</i></a>
                   <a v-bind:href='phpLimitsData.scriptLink' id='download-script'>Required Script</a>
+                  <p class='script-warning grey-text'>(Must be logged into Confluence)</p>
                 </div>
               </p>
             </td>
@@ -235,21 +280,35 @@ export default {
       internalData: {
         errorType: '500 Internal Server Error',
         description: 'This error is generic and means the application had a problem, but may be related to a problem on the server.',
-        link: 'http://localhost:3000',
+        link: 'https://confluence.godaddy.com/download/attachments/20748053/phpinfo.php?version=2&modificationDate=1493746207000&api=v2&download=true',
         helpLinkBool: false,
         solutionOne: 'If this is a PHP-based site (check for index.php), trying running a test script. You can download one from the Required Script column.',
         solutionTwo: 'If your test script also produces a 500 or ISE error, try disabling the .htaccess file. If the error still occurs, take this to a Tech Lead.',
         solutionThree: 'If your test script worked and this is not a WordPress site, the customer or their developer will need to address the issue on their own.',
         solutionFour: 'If your test script worked and this IS a WordPress site, this issue is caused by WP or a theme or plugin. Offer WPPS.'
       },
+      syntaxData: {
+        errorType: 'Syntax Error',
+        description: 'A syntax or parse error is essentially a typo in the code.',
+        scriptLink: null,
+        helpLinkBool: null,
+        helpLink: null,
+        solutionOne: 'If this is a WP site ',
+        wpps: 'sell WPPS.',
+        solutionTwo: 'If this is not WP, let the customer know that a developer will need to address this issue.',
+        solutionThree: 'Be sure to check for signs of hacking/malware',
+        solutionFour: null,
+        solutionFive: null,
+        solutionSix: null
+      },
       phpLimitsData: {
         memory: {
-          errorType: 'PHP Memory Limit Error',
+          errorType: 'PHP Memory Limit',
           description: 'This page is a work in progress!',
           scriptLink: '',
           helpLinkBool: '',
           helpLink: '',
-          solutionOne: '',
+          solutionOne: 'Sorry, this is a work in progress!',
           solutionTwo: '',
           solutionThree: '',
           solutionFour: '',
@@ -262,7 +321,7 @@ export default {
           scriptLink: '',
           helpLinkBool: '',
           helpLink: '',
-          solutionOne: '',
+          solutionOne: 'Sorry, this is a work in progress!',
           solutionTwo: '',
           solutionThree: '',
           solutionFour: '',
@@ -275,7 +334,7 @@ export default {
           scriptLink: '',
           helpLinkBool: '',
           helpLink: '',
-          solutionOne: '',
+          solutionOne: 'Sorry, this is a work in progress!',
           solutionTwo: '',
           solutionThree: '',
           solutionFour: '',
@@ -299,6 +358,11 @@ export default {
 
   .face-inner {
     color: grey;
+  }
+  .script-warning {
+    font-size: 11px;
+    font-weight: bold;
+
   }
   #download-script {
     margin-left: 6px;

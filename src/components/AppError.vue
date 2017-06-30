@@ -1,5 +1,5 @@
   <template>
-  <!--  WordPress Error Template  -->
+  <!--  Application Error Template  -->
   <div class="row">
     <div class="col s10 offset-s1">
       <table class="bordered highlight">
@@ -18,17 +18,21 @@
                 {{wp.errorName}}
               </div>
             </td>
-            <td v-if='wordpress'>This error is always caused by a problem with the application.</td>
-            <td v-if='wp.wpPhpLimits.memory'></td>
+            <td v-if='wp.wpBool'>{{wordpress.description}}</td>
+            <td v-if='wp.wpPhpLimits.memory'></td><!-- spacer -->
           </tr>
           <tr>
             <td>
               <div class="chip">
                 <span class="chip-label orange accent-3">C</span>
-                Caused by Theme or Plugin
+                <span v-if='wp.wpBool'>{{wordpress.cause}}</span>
               </div>
             </td>
-            <td>{{wp.themePlug}}</td>
+            <td>
+              <span v-if='wp.theme'>{{wordpress.theme}}</span>
+              <span v-if='wp.plugin'>{{wordpress.plugin}}</span>
+              <span v-if='wp.themePlug'>{{wordpress.themePlug}}</span>
+            </td>
             <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
           <tr v-if='wp.wpPhpLimits.memory'>
@@ -129,8 +133,28 @@
 
 <script>
   export default {
-    props: ['wp', 'wordpress', 'syntax']
-    //  import our WP props from the main App.vue
+    props: ['wp', 'syntax'], //  import our WP props from the main App.vue
+    data () {
+      return {
+        wordpress: {
+          theme: 'Theme',
+          plugin: 'Plugin',
+          themePlug: 'Theme or Plugin',
+          app: 'WP Core Application',
+          cause: 'Caused by Theme or Plugin:',
+          description: 'This error is always caused by a problem with the application.',
+          scriptLink: '',
+          helpLinkBool: '',
+          helpLink: '',
+          solutionOne: 'Sorry, this is a work in progress!',
+          solutionTwo: '',
+          solutionThree: '',
+          solutionFour: '',
+          solutionFive: '',
+          solutionSix: ''
+        }
+      }
+    }
   }
 </script>
 

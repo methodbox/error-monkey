@@ -2,7 +2,7 @@
   <div>
     <app-header v-bind:nav='nav' v-on:bugEmit="bugReport"></app-header>
     <span id='version'>v1.3.2</span>
-    <div id="app">
+    <div id="errorMonkey">
       <div class="row">
         <div class="col s4 offset-s4">
           <img src="./assets/error-monkey-icon@0.25x.png">
@@ -18,9 +18,9 @@
           <unknown></unknown>
         </div>
       </div>
-      <div class="row" v-if='wordpress || syntax'>
+      <div class="row" v-if='wp.wpBool || application'>
         <div class="col s12">
-          <app-error v-bind:wp="wp, wordpress"></app-error>
+          <app-error v-bind:wp="wp, app"></app-error>
         </div>
       </div>
       <div class="row" v-if='common'>
@@ -52,7 +52,7 @@ import ServerError from './components/ServerError'
 import NetworkError from './components/NetworkError'
 import Instructions from './components/Instructions'
 export default {
-  name: 'app',
+  name: 'errorMonkey',
   components: {
     AppHeader,
     ErrorField,
@@ -68,23 +68,27 @@ export default {
       nav: {
         instr: true //  conditional for displaying Instructions on-click
       },
-      wordpress: false, //  booleans to determine which template is rendered
-      joomla: false,
-      custom: false,
+      application: false, //  booleans to determine which template is rendered
+      app: {
+        syntax: false,
+        fatal: false
+      },
       common: false,
       server: false,
       network: false,
       unknown: false, //  unrecognized errors template
       wp: { //  WP errors template props
-        errorName: '', //  A short description of the error - WP & Server error templates are passed this value
-        themePlug: '',
+        wpBool: false,
+        theme: false,
+        plugin: false,
+        themePlug: false,
+        errorName: null,
         wpPhpLimits: {
           memory: false,
           execTime: false,
           inputTime: false
         }
       },
-      syntax: false,
       commonErrors: { //  common errors template props
         notFound: false,
         forbidden: false
@@ -112,8 +116,13 @@ export default {
   },
   methods: {
     resetForm () {
-      this.wordpress = false
-      this.syntax = false
+      this.application = false
+      this.app.syntax = false
+      this.app.fatal = false
+      this.wp.wpBool = false
+      this.wp.theme = false
+      this.wp.plugin = false
+      this.wp.themePlug = false
       this.wp.wpPhpLimits.memory = false
       this.wp.wpPhpLimits.execTime = false
       this.wp.wpPhpLimits.inputTime = false
@@ -144,16 +153,27 @@ export default {
       let errorText = document.getElementById('error-field')
       let parseError = errorText.value.split(' ') // parse the error
       let wpParseError = errorText.value.split('/') // parse the path in the error - looking for WP values
-      //  filter out values using methods and store them in a variable
+      let appArray = this.appFilter(parseError) //  pass the error to a filter and store results in an array
       let wpArray = this.wpFilter(wpParseError, errorText)
       let networkArray = this.networkFilter(parseError)
-      let commonArray = this.commonFilter(parseError, errorText)
       let serverArray = this.serverFilter(parseError)
+      let commonArray = this.commonFilter(parseError, errorText)
+      if (appArray.length !== 0) {
+        this.appEvent(appArray[0])
+      }
       if (wpArray.length !== 0) { //  check if the err array has a value
         if (serverArray.length !== 0) {
-          this.wpEvent(serverArray, errorText) // fire a sub event to handle rendering the proper template
+          this.wpEvent(serverArray[0], errorText) // fire a sub event to handle rendering the proper template
         } else {
-          this.wpEvent(wpArray, errorText)
+          this.wpEvent(wpArray[0], errorText)
+        }
+      }
+      if (networkArray.length !== 0) {
+        this.networkEvent(networkArray[0])
+      }
+      if (serverArray.length !== 0) {
+        if (wpArray.length === 0) {
+          this.serverEvent(serverArray[0])
         }
       }
       if (commonArray.length !== 0) {
@@ -163,17 +183,24 @@ export default {
           this.wpEvent(commonArray, errorText)
         }
       }
-      if (networkArray.length !== 0) {
-        this.networkEvent(networkArray)
-      }
-      if (serverArray.length !== 0) {
-        if (wpArray.length === 0) {
-          this.serverEvent(serverArray)
-        }
-      }
-      if (wpArray.length === 0 && commonArray.length === 0 && serverArray.length === 0 && networkArray.length === 0) {
+      if (appArray.length === 0 && wpArray.length === 0 && commonArray.length === 0 && serverArray.length === 0 && networkArray.length === 0) {
         this.unknownEvent()
       }
+    },
+    appFilter (error) {
+      const appErr = error.filter((err) => {
+        switch (err) {
+          case 'Parse':
+            return err
+          case 'syntax':
+            return err
+          case 'Fatal':
+            return err
+          case 'undefined':
+            return err
+        }
+      })
+      return appErr
     },
     wpFilter (error, wpText) {
       const wpErr = error.filter((err) => {
@@ -187,21 +214,6 @@ export default {
         }
       })
       return wpErr
-    },
-    commonFilter (error, commonText) {
-      const commonErr = error.filter((err) => {
-        switch (err) {
-          case 'Forbidden':
-            return err
-          case 'Not':
-            return err
-          case 'Found':
-            return err
-          case 'wp()':
-            return err
-        }
-      })
-      return commonErr
     },
     networkFilter (error) {
       const networkErr = error.filter((err) => {
@@ -243,29 +255,55 @@ export default {
             return err
           case '(using':
             return err
-          case 'Parse':
+        }
+      })
+      return serverErr
+    },
+    commonFilter (error, commonText) {
+      const commonErr = error.filter((err) => {
+        switch (err) {
+          case 'Forbidden':
             return err
-          case 'syntax':
+          case 'Not':
+            return err
+          case 'Found':
+            return err
+          case 'wp()':
             return err
         }
       })
-      console.log(serverErr)
-      return serverErr
+      return commonErr
+    },
+    appEvent (error) {
+      switch (error) {
+        case 'Parse':
+          this.app.syntax = true
+          break
+        case 'syntax':
+          this.app.syntax = true
+          break
+        case 'Fatal':
+          this.app.fatal = true
+          break
+        case 'undefined':
+          this.app.fatal = true
+          break
+      }
+      this.application = true
     },
     wpEvent (errorPath, errorName) { //  conditional rendering methods for templates
-      let path = errorPath[0]
-      switch (path) {
+      switch (errorPath) {
         case 'themes':
-          this.wp.themePlug = 'Theme'
+          this.wp.theme = true
           break
         case 'plugins':
-          this.wp.themePlug = 'Plugin'
+          this.wp.plugin = true
           break
         case 'wp-admin':
-          this.wp.themePlug = 'Theme or Plugin'
+          this.wp.themePlug = true
           break
         case 'wp-includes':
-          this.wp.themePlug = 'Theme or Plugin'
+          this.wp.themePlug = true
           break
         case 'memory':
           this.wp.wpPhpLimits.memory = true
@@ -274,54 +312,12 @@ export default {
         default:
           this.wp.themePlug = 'WordPress Application Error'
       }
-      this.wordpress = true
+      this.application = true
+      this.wp.wpBool = true
       this.wp.errorName = errorName.value.substring(0, 12) // grab parse of error value and set as desc
     },
-    commonEvent (commonErrorType) {
-      if (commonErrorType[0] === 'Forbidden') {
-        this.commonErrors.forbidden = true
-      } else if (commonErrorType[0] + ' ' + commonErrorType[1] === 'Not Found') {
-        this.commonErrors.notFound = true
-      }
-      this.common = true
-    },
-    serverEvent (serverErrorType) {
-      let serverErrorValue = serverErrorType[0]
-      switch (serverErrorValue) {
-        case 'session_start():':
-          this.serverErrors.tmp = true
-          break
-        case 'Unknown:':
-          this.serverErrors.tmp = true
-          break
-        case 'database':
-          this.serverErrors.database = true
-          break
-        case 'Internal':
-          this.serverErrors.internal = true
-          break
-        case '500':
-          this.serverErrors.internal = true
-          break
-        case 'memory':
-          this.serverErrors.phpLimits = true
-          this.serverErrors.phpLimit.memory = true
-          break
-        case '(using':
-          this.serverErrors.database = true
-          break
-        case 'Parse':
-          this.syntax = true
-          break
-        case 'syntax':
-          this.syntax = true
-          break
-      }
-      this.server = true
-    },
     networkEvent (networkErrorType) {
-      let networkErrorValue = networkErrorType[0]
-      switch (networkErrorValue) {
+      switch (networkErrorType) {
         case 'ERR_CONNECTION_REFUSED':
           this.networkErrors.connection = true
           break
@@ -345,6 +341,41 @@ export default {
           break
       }
       this.network = true
+    },
+    serverEvent (serverErrorType) {
+      switch (serverErrorType) {
+        case 'session_start():':
+          this.serverErrors.tmp = true
+          break
+        case 'Unknown:':
+          this.serverErrors.tmp = true
+          break
+        case 'database':
+          this.serverErrors.database = true
+          break
+        case 'Internal':
+          this.serverErrors.internal = true
+          break
+        case '500':
+          this.serverErrors.internal = true
+          break
+        case 'memory':
+          this.serverErrors.phpLimits = true
+          this.serverErrors.phpLimit.memory = true
+          break
+        case '(using':
+          this.serverErrors.database = true
+          break
+      }
+      this.server = true
+    },
+    commonEvent (commonErrorType) {
+      if (commonErrorType[0] === 'Forbidden') {
+        this.commonErrors.forbidden = true
+      } else if (commonErrorType[0] + ' ' + commonErrorType[1] === 'Not Found') {
+        this.commonErrors.notFound = true
+      }
+      this.common = true
     },
     unknownEvent () {
       this.unknown = true
@@ -432,7 +463,7 @@ export default {
   button#submit-button {
     margin-top: 20px;
   }
-  #app {
+  #errorMonkey {
     font-family: 'Lato', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

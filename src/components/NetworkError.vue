@@ -26,6 +26,9 @@
                 <div v-if='networkErrors.redirects'>
                   {{redirectData.errorType}}
                 </div>
+                <div v-if='networkErrors.timeout'>
+                  {{timeoutData.errorType}}
+                </div>
               </div>
             </td>
             <td>
@@ -40,6 +43,9 @@
               </div>
               <div v-if='networkErrors.redirects'>
                 {{redirectData.description}}
+              </div>
+              <div v-if='networkErrors.timeout'>
+                {{timeoutData.description}}
               </div>
             </td>
             <td></td>
@@ -69,6 +75,14 @@
                     <div v-if='networkErrors.ssl'>
                       <i class="material-icons">build</i>
                       {{sslData.solutionOne}} <a v-bind:href='sslData.helpLink' v-if='sslData.helpLinkBool'>Common Config</a>
+                    </div>
+                    <div v-if='networkErrors.redirects'>
+                      <i class="material-icons">build</i>
+                      {{redirectData.solutionOne}}
+                    </div>
+                    <div v-if='networkErrors.timeout'>
+                      <i class="material-icons">build</i>
+                      {{timeoutData.solutionOne}}
                     </div>
                   </li>
                   <li>
@@ -225,6 +239,19 @@ export default {
       redirectData: {
         errorType: 'Too Many Redirects',
         description: 'Caused by too many concurrent redirects, usually due to incorrect forward or hosting settings.',
+        scriptLink: '',
+        helpLinkBool: '',
+        helpLink: '',
+        solutionOne: 'Sorry, this is a work in progress!',
+        solutionTwo: '',
+        solutionThree: '',
+        solutionFour: '',
+        solutionFive: '',
+        solutionSix: ''
+      },
+      timeoutData: {
+        errorType: 'Network Connection Timed Out',
+        description: 'Can be caused by local network, ISP or GoDaddy network issues.',
         scriptLink: '',
         helpLinkBool: '',
         helpLink: '',

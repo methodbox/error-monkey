@@ -1,7 +1,7 @@
 <template>
   <div>
     <app-header v-bind:nav='nav' v-on:bugEmit="bugReport"></app-header>
-    <span id='version'>v1.3.2</span>
+    <span id='version'>v1.3.3</span>
     <div id="errorMonkey">
       <div class="row">
         <div class="col s4 offset-s4">
@@ -210,6 +210,8 @@ export default {
           case 'plugins':
             return err
           case 'wp-admin':
+            return err
+          case 'wp-includes':
             return err
         }
       })

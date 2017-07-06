@@ -123,7 +123,7 @@
                 </td>
               </div>
             </div>
-            <td wp.wpPhpLimits.memory></td>
+            <td v-if='wp.wpPhpLimits.memory'></td>
           </tr>
         </tbody>
       </table>

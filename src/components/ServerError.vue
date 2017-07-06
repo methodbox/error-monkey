@@ -79,8 +79,8 @@
                       {{databaseData.solutionOne}} <a v-bind:href='databaseData.helpLink' v-if='databaseData.helpLinkBool' target='_blank'>Common Config</a>
                     </div>
                     <div v-if='serverErrors.internal'>
-                      {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool' target='_blank'>Common Config</a>
                       <i class="material-icons">build</i>
+                      {{internalData.solutionOne}} <a v-bind:href='internalData.helpLink' v-if='internalData.helpLinkBool' target='_blank'>Common Config</a>
                     </div>
                     <div v-if='serverErrors.syntax'>
                       <i class="material-icons">build</i>

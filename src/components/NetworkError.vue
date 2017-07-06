@@ -218,7 +218,7 @@ export default {
         helpLink: 'http://dns.beardof.red',
         solutionOne: 'First, check that the domain in the address bar did not redirect before giving the error (exa. google.com -> WWW.google.com)',
         solutionTwo: 'Check the DNS using a remote DNS tool: ',
-        solutionThree: '',
+        solutionThree: 'Sorry, this is a work in progress!',
         solutionFour: '',
         solutionFive: '',
         solutionSix: ''

@@ -9,7 +9,7 @@
       </div>
       <div class="col s2 button-spacing">
         <button class="waves-effect waves-light btn pink accent-2" id="submit-button" type="button" v-on:click="errorSub">
-          Fix Me
+          Help Me
         </button>
       </div>
     </div>
